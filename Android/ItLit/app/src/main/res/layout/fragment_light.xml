@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+    <TextView
+        android:text="offline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:id="@+id/tvLighttalk"
+        android:textColor="@color/colorText"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="15dp"
+        android:layout_centerHorizontal="true" />
+
+    <LinearLayout
+        android:layout_below="@+id/tvLighttalk"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:weightSum="1">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="181dp"
+            app:srcCompat="@drawable/lightoff"
+            android:id="@+id/ivLight"
+            android:layout_weight="0.46" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:layout_weight="0.41">
+
+            <TextView
+                android:text="Log out"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:textColor="@color/colorText"
+                android:id="@+id/tvLogout" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:ems="10"
+                android:id="@+id/etStatus"
+                android:textColor="@color/colorText"
+                android:textColorHint="@color/colorText"
+                android:hint="what's happnin?"
+                android:layout_weight="0.14"
+                android:singleLine="false"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="38dp"
+                android:maxLength="50"/>
+
+            <TextView
+                android:text="0 characters"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvChars"
+                android:textColor="@color/colorText"
+                android:layout_below="@+id/etStatus"
+                android:layout_alignParentStart="true" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

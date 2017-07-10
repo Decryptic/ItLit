@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="io.itlit.ItLit.ContactsActivity">
+    <fragment
+        android:id="@+id/fragment_contacts"
+        android:name="io.itlit.ItLit.ContactsFragment"
+        class="io.itlit.ItLit.ContactsFragment"
+        android:layout_weight="1"
+        android:layout_height="fill_parent"
+        android:layout_width="match_parent">
+    </fragment>
+</LinearLayout>
