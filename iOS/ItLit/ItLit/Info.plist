@@ -17,15 +17,15 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.1</string>
+	<string>1.0</string>
 	<key>CFBundleVersion</key>
-	<string>11</string>
+	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>may ${PRODUCT_NAME} use your phone&apos;s camera to take profile pictures?</string>
+	<string>may ${PRODUCT_NAME} use your phone's camera to take profile pictures?</string>
 	<key>NSContactsUsageDescription</key>
-	<string>may ${PRODUCT_NAME} view your phone&apos;s contacts to add friends?</string>
+	<string>may ${PRODUCT_NAME} view your phone's contacts to add friends?</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>may ${PRODUCT_NAME} access your location while your lightbulb is on? only friends accompanied by a lit candle can see your location.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>

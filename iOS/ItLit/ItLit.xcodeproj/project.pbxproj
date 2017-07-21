@@ -366,6 +366,7 @@
 				TargetAttributes = {
 					467042F01F0BFBA400F8FFF2 = {
 						CreatedOnToolsVersion = 8.3.3;
+						DevelopmentTeam = 95BN23LN69;
 						LastSwiftMigration = 0830;
 						ProvisioningStyle = Automatic;
 					};
@@ -603,6 +604,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				DEVELOPMENT_TEAM = 95BN23LN69;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -610,7 +612,7 @@
 				INFOPLIST_FILE = ItLit/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MACH_O_TYPE = mh_execute;
-				PRODUCT_BUNDLE_IDENTIFIER = io.itlit.ItLit;
+				PRODUCT_BUNDLE_IDENTIFIER = io.itlit.itlit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = ItLit/BridgingHeader.h;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -623,6 +625,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				DEVELOPMENT_TEAM = 95BN23LN69;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -630,7 +633,7 @@
 				INFOPLIST_FILE = ItLit/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MACH_O_TYPE = mh_execute;
-				PRODUCT_BUNDLE_IDENTIFIER = io.itlit.ItLit;
+				PRODUCT_BUNDLE_IDENTIFIER = io.itlit.itlit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = ItLit/BridgingHeader.h;
 				SWIFT_VERSION = 3.0;

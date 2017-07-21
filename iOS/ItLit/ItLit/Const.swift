@@ -5,6 +5,10 @@
 //  Created by Gage Swenson on 5/14/17.
 //  Copyright © 2017 juicyasf. All rights reserved.
 //
+//
+//  5.5" display landscape: 1242 x 2208 px
+//  12.9" display landscpe: 2048 x 2732 px
+//
 
 import Foundation
 import UIKit
