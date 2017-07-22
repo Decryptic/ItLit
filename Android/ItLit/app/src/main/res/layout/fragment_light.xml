@@ -54,7 +54,7 @@
                 android:id="@+id/etStatus"
                 android:textColor="@color/colorText"
                 android:textColorHint="@color/colorText"
-                android:hint="what's hapnen?"
+                android:hint="what's hapenen?"
                 android:layout_weight="0.14"
                 android:singleLine="false"
                 android:layout_alignParentTop="true"
