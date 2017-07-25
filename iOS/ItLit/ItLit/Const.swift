@@ -5,18 +5,14 @@
 //  Created by Gage Swenson on 5/14/17.
 //  Copyright © 2017 juicyasf. All rights reserved.
 //
-//
-//  5.5" display landscape: 1242 x 2208 px
-//  12.9" display landscpe: 2048 x 2732 px
-//
 
 import Foundation
 import UIKit
 import CoreLocation
 
 class Const {
-    public static func server(_ ext: String) -> String {
-        return "https://www.itlit.io/" + ext
+    public static func server(_ ep: String) -> String {
+        return "https://www.itlit.io/" + ep
     }
     
     //toast time
@@ -90,5 +86,15 @@ class Const {
             }
             return quickSortAux(pre) + [frens[mid]] + quickSortAux(post)
         }
+    }
+    
+    public static func sha256(input: String) -> String {
+        let data = input.data(using: String.Encoding.utf8)
+        let res = NSMutableData(length: Int(CC_SHA256_DIGEST_LENGTH))
+        CC_SHA256(((data! as NSData)).bytes, CC_LONG(data!.count), res?.mutableBytes.assumingMemoryBound(to: UInt8.self))
+        let hashedString = "\(res!)".replacingOccurrences(of: "", with: "").replacingOccurrences(of: " ", with: "")
+        let badchar: CharacterSet = CharacterSet(charactersIn: "\"<\",\">\"")
+        let cleanedstring: String = (hashedString.components(separatedBy: badchar) as NSArray).componentsJoined(by: "")
+        return cleanedstring
     }
 }
