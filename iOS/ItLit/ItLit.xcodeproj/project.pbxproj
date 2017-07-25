@@ -23,7 +23,6 @@
 		460F24251F0C24480051FF61 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 460F24241F0C24480051FF61 /* Main.storyboard */; };
 		460F24271F0C244E0051FF61 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 460F24261F0C244E0051FF61 /* LaunchScreen.storyboard */; };
 		460F24291F0CCF660051FF61 /* GoogleMaps.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 460F24281F0CCF660051FF61 /* GoogleMaps.bundle */; };
-		4647F3001F1336E700B6B2A3 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4647F2FF1F1336E700B6B2A3 /* Default-568h@2x.png */; };
 		4670430C1F0BFBA400F8FFF2 /* ItLitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4670430B1F0BFBA400F8FFF2 /* ItLitTests.swift */; };
 		467043171F0BFBA400F8FFF2 /* ItLitUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 467043161F0BFBA400F8FFF2 /* ItLitUITests.swift */; };
 		468CF4F31F0C0D1700CE66F0 /* ActivateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 468CF4E01F0C0D1700CE66F0 /* ActivateViewController.swift */; };
@@ -99,7 +98,6 @@
 		460F24241F0C24480051FF61 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Main.storyboard; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		460F24261F0C244E0051FF61 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		460F24281F0CCF660051FF61 /* GoogleMaps.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = GoogleMaps.bundle; sourceTree = "<group>"; };
-		4647F2FF1F1336E700B6B2A3 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		467042F11F0BFBA400F8FFF2 /* ItLit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ItLit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		467043071F0BFBA400F8FFF2 /* ItLitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ItLitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4670430B1F0BFBA400F8FFF2 /* ItLitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItLitTests.swift; sourceTree = "<group>"; };
@@ -212,7 +210,6 @@
 		467042E81F0BFBA400F8FFF2 = {
 			isa = PBXGroup;
 			children = (
-				4647F2FF1F1336E700B6B2A3 /* Default-568h@2x.png */,
 				460F24281F0CCF660051FF61 /* GoogleMaps.bundle */,
 				468CF5051F0C0D6A00CE66F0 /* GoogleMaps.framework */,
 				468CF5061F0C0D6A00CE66F0 /* GoogleMapsBase.framework */,
@@ -412,7 +409,6 @@
 				460F24251F0C24480051FF61 /* Main.storyboard in Resources */,
 				460F24291F0CCF660051FF61 /* GoogleMaps.bundle in Resources */,
 				460F24271F0C244E0051FF61 /* LaunchScreen.storyboard in Resources */,
-				4647F3001F1336E700B6B2A3 /* Default-568h@2x.png in Resources */,
 				468CF4FF1F0C0D1700CE66F0 /* InfoWindo.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

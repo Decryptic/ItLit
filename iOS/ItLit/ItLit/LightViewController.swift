@@ -20,6 +20,7 @@ class LightViewController: UIViewController, CLLocationManagerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        initBulb()
         initStatus()
         initFriends()
         
@@ -35,6 +36,48 @@ class LightViewController: UIViewController, CLLocationManagerDelegate {
     
     override func viewWillDisappear(_ animated: Bool) {
         statusChange(sender: etStatus)
+    }
+    
+    func initBulb() {
+        let json: [String: Any] = ["uname": Const.uname, "passwd": Const.passwd]
+        
+        let auth = try? JSONSerialization.data(withJSONObject: json)
+        let url = URL(string: Const.server("light"))
+        var request = URLRequest(url: url!)
+        request.httpMethod = "POST"
+        request.httpBody = auth
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        
+        let task = URLSession.shared.dataTask(with: request) { data, resp, error in
+            guard let data = data, error == nil else {
+                print(error?.localizedDescription ?? "No data")
+                return
+            }
+            let response = try? JSONSerialization.jsonObject(with: data)
+            if let response = response as? [String: Any] {
+                if let err = response["error"] {
+                    print("error initBulb: " + (err as! String))
+                }
+                else if let lit = response["lit"] {
+                    var imgName: String
+                    if lit as! Bool {
+                        imgName = "lighton"
+                    }
+                    else {
+                        imgName = "lightoff"
+                    }
+                    self.btnLight.setImage(UIImage(named:imgName), for: .normal)
+                }
+                else {
+                    print("error /light must not be working right")
+                }
+            }
+            else {
+                print("InitBulb: repsonse was not json")
+            }
+        }
+        task.resume()
     }
     
     func initStatus() {
@@ -56,12 +99,10 @@ class LightViewController: UIViewController, CLLocationManagerDelegate {
             let response = try? JSONSerialization.jsonObject(with: data)
             if let response = response as? [String: Any] {
                 if let err = response["error"] {
-                    DispatchQueue.main.async {
-                        self.view.makeToast(err as! String, duration: Const.tt(), position: .top)
-                    }
+                    print("error in initStatus: " + (err as! String))
                 }
                 else if let status = response["status"] {
-                    self.etStatus.text = status as! String
+                    self.etStatus.text = status as? String ?? ""
                     self.tvChars.text = String((status as! String).characters.count) + " characters"
                 }
                 else {
@@ -145,14 +186,44 @@ class LightViewController: UIViewController, CLLocationManagerDelegate {
                     Const.lit = !Const.lit
                     DispatchQueue.main.async {
                         if Const.lit {
-                            self.tvTalk.text = "friends can see you"
-                            self.btnLight.setImage(UIImage(named: "lighton"), for: .normal)
-                            
-                            Const.locationManager = CLLocationManager()
-                            Const.locationManager?.delegate = self
-                            Const.locationManager?.desiredAccuracy = kCLLocationAccuracyBest
-                            Const.locationManager?.requestAlwaysAuthorization()
-                            Const.locationManager?.startUpdatingLocation()
+                            if CLLocationManager.locationServicesEnabled() {
+                                Const.locationManager = CLLocationManager()
+                                
+                                let status = CLLocationManager.authorizationStatus()
+                                if status == .notDetermined {
+                                    Const.locationManager?.requestAlwaysAuthorization()
+                                }
+                                else if status == .authorizedWhenInUse || status == .restricted || status == .denied {
+                                    let alertController = UIAlertController(
+                                        title: "Enable Background Location",
+                                        message: "In order to use ItLit, please enable 'Always' location in settings.",
+                                        preferredStyle: .alert)
+                                    
+                                    let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+                                    alertController.addAction(cancelAction)
+                                    
+                                    let openAction = UIAlertAction(title: "Open Settings", style: .default) { action in
+                                        if let url = NSURL(string: UIApplicationOpenSettingsURLString) {
+                                            UIApplication.shared.open(url, options: nil, completionHandler: nil)
+                                        }
+                                    }
+                                    alertController.addAction(openAction)
+                                    self.present(alertController, animated: true, completion: nil)
+                                    
+                                }
+                                else if status == .authorizedAlways {
+                                    self.tvTalk.text = "friends can see you"
+                                    self.btnLight.setImage(UIImage(named: "lighton"), for: .normal)
+                                    
+                                    Const.locationManager?.delegate = self
+                                    Const.locationManager?.desiredAccuracy = kCLLocationAccuracyBest
+                                    Const.locationManager?.allowsBackgroundLocationUpdates = true;
+                                    Const.locationManager?.startUpdatingLocation()
+                                }
+                            }
+                            else {
+                                self.view.makeToast("Location services disabled", duration: Const.tt(), position: .top)
+                            }
                         }
                         else {
                             self.tvTalk.text = "offline"
