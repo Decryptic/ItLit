@@ -203,8 +203,8 @@ class LightViewController: UIViewController, CLLocationManagerDelegate {
                                     alertController.addAction(cancelAction)
                                     
                                     let openAction = UIAlertAction(title: "Open Settings", style: .default) { action in
-                                        if let url = NSURL(string: UIApplicationOpenSettingsURLString) {
-                                            UIApplication.shared.open(url, options: nil, completionHandler: nil)
+                                        if let url = URL(string: UIApplicationOpenSettingsURLString) {
+                                            UIApplication.shared.open(url, options: [:], completionHandler: nil)
                                         }
                                     }
                                     alertController.addAction(openAction)

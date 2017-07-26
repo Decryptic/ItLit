@@ -39,12 +39,49 @@ class AddFriendViewController: UIViewController {
         let fname = Const.phonify(number: self.etFname?.text ?? "")
         
         if let err = errorless(name, fname) {
-            self.view.makeToast(err, duration: 2.0, position: .top)
+            self.view.makeToast(err, duration: Const.tt(), position: .top)
             return
+        }
+        
+        // If they change the number, you gotta delfriend before you setfriend
+        var deleteOld = false
+        if let index = Const.ecOldIndex {
+            let oldFriend = Const.friends[index]
+            deleteOld = (oldFriend["fname"] as! String) != fname
         }
         
         let friend: [String: Any] = ["name": name, "fname": fname, "lit": false]
         let json: [String: Any] = ["uname": Const.uname, "passwd": Const.passwd, "friend": friend]
+        
+        if deleteOld {
+            let auth = try? JSONSerialization.data(withJSONObject: json)
+            let url = URL(string: Const.server("delfriend"))
+            var request = URLRequest(url: url!)
+            request.httpMethod = "POST"
+            request.httpBody = auth
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.addValue("application/json", forHTTPHeaderField: "Accept")
+            
+            let task = URLSession.shared.dataTask(with: request) { data, resp, error in
+                guard let data = data, error == nil else {
+                    let err = error?.localizedDescription ?? "Please try again later"
+                    print("error deleteOld: " + err)
+                    return
+                }
+                let response = try? JSONSerialization.jsonObject(with: data)
+                if let response = response as? [String: Any] {
+                    if let err = response["error"] {
+                        print("error deleteOld: " + (err as! String))
+                    }
+                    else {
+                        Const.friends.remove(at: Const.ecOldIndex!)
+                    }
+                } else {
+                    print("deleteOld: response was not json")
+                }
+            }
+            task.resume()
+        }
         
         let auth = try? JSONSerialization.data(withJSONObject: json)
         let url = URL(string: Const.server("setfriend"))
@@ -76,8 +113,10 @@ class AddFriendViewController: UIViewController {
                     Const.friends.append(friend)
                 }
             } else {
-                print("SetFriend2: response was not json")
-                self.view.makeToast("Please try again later", duration: 2.0, position: .top)
+                print("addFriend: response was not json")
+                DispatchQueue.main.async {
+                    self.view.makeToast("Please try again later", duration: Const.tt(), position: .top)
+                }
             }
             Const.ecName = nil
             Const.ecFname = nil
