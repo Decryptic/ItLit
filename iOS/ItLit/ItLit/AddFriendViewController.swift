@@ -45,15 +45,16 @@ class AddFriendViewController: UIViewController {
         
         // If they change the number, you gotta delfriend before you setfriend
         var deleteOld = false
+        var oldUname: String?
         if let index = Const.ecOldIndex {
-            let oldFriend = Const.friends[index]
-            deleteOld = (oldFriend["fname"] as! String) != fname
+            oldUname = Const.friends[index]["fname"] as! String
+            deleteOld = oldUname != fname
         }
         
-        let friend: [String: Any] = ["name": name, "fname": fname, "lit": false]
-        let json: [String: Any] = ["uname": Const.uname, "passwd": Const.passwd, "friend": friend]
-        
         if deleteOld {
+            let friend: [String: Any] = ["name": name, "fname": oldUname!, "lit": false]
+            let json: [String: Any] = ["uname": Const.uname, "passwd": Const.passwd, "friend": friend]
+            
             let auth = try? JSONSerialization.data(withJSONObject: json)
             let url = URL(string: Const.server("delfriend"))
             var request = URLRequest(url: url!)
@@ -82,6 +83,9 @@ class AddFriendViewController: UIViewController {
             }
             task.resume()
         }
+        
+        let friend: [String: Any] = ["name": name, "fname": fname, "lit": false]
+        let json: [String: Any] = ["uname": Const.uname, "passwd": Const.passwd, "friend": friend]
         
         let auth = try? JSONSerialization.data(withJSONObject: json)
         let url = URL(string: Const.server("setfriend"))
