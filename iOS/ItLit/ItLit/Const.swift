@@ -27,7 +27,7 @@ class Const {
     public static func selfieDir() -> String {
         let dir = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
         let url = URL(fileURLWithPath: dir)
-        let fil = url.appendingPathComponent("littselfie.png")
+        let fil = url.appendingPathComponent("selfie.png")
         return fil.absoluteString
     }
     

@@ -174,9 +174,10 @@ class FriendsViewController: UIViewController, UITableViewDataSource, UITableVie
         if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
             btnSelfie?.setImage(image, for: .normal)
             Const.faces[Const.uname] = image
-            let pngImage = UIImagePNGRepresentation(image)
+            var pngImage = UIImagePNGRepresentation(image)
             do {
                 try pngImage!.write(to: URL(string: Const.selfieDir())!)
+                pngImage = UIImagePNGRepresentation(image.resized(toWidth: 100.0)!)
                 
                 let border = "--- BUILD A WALL ---"
                 let url = URL(string: Const.server("setpic"))
@@ -211,7 +212,7 @@ class FriendsViewController: UIViewController, UITableViewDataSource, UITableVie
                     let response = try? JSONSerialization.jsonObject(with: data)
                     if let response = response as? [String: Any] {
                         if let err = response["error"] as? String {
-                            print("location update error: " + err)
+                            print("setpic error: " + err)
                         }
                         else {
                             // pic set
@@ -219,13 +220,13 @@ class FriendsViewController: UIViewController, UITableViewDataSource, UITableVie
                     } else {
                         print("SetPic: something went wrong")
                         DispatchQueue.main.async {
-                            self.view.makeToast("Please try again later", duration: 2.0, position: .top)
+                            self.view.makeToast("Please try again later", duration: Const.tt(), position: .top)
                         }
                     }
                 }
                 task.resume()
             } catch {
-                self.view.makeToast("Failed to save image", duration: 2.0, position: .top)
+                self.view.makeToast("Failed to save image", duration: Const.tt(), position: .top)
             }
         }
         picker.dismiss(animated: true, completion: nil)

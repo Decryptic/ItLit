@@ -25,9 +25,12 @@ class LightViewController: UIViewController, CLLocationManagerDelegate {
         initFriends()
         
         //init selfie
+        let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as String
+        let url = NSURL(fileURLWithPath: path)
+        let filePath = url.appendingPathComponent("selfie.png")?.path
         let fileMan = FileManager.default
-        if fileMan.fileExists(atPath: Const.selfieDir()) {
-            Const.faces[Const.uname] = UIImage(contentsOfFile: Const.selfieDir())
+        if fileMan.fileExists(atPath: filePath!) {
+            Const.faces[Const.uname] = UIImage(contentsOfFile: filePath!)
         }
         else {
             Const.faces[Const.uname] = UIImage(named: "nullpicbig")
