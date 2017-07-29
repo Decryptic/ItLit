@@ -14,7 +14,7 @@ class AddFriendViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.etName?.text = Const.ecName ?? ""
+        self.etName.text = Const.ecName ?? ""
         self.etFname.text = Const.ecFname ?? ""
     }
     
@@ -65,20 +65,20 @@ class AddFriendViewController: UIViewController {
             
             let task = URLSession.shared.dataTask(with: request) { data, resp, error in
                 guard let data = data, error == nil else {
-                    let err = error?.localizedDescription ?? "Please try again later"
-                    print("error deleteOld: " + err)
+                    let err = error?.localizedDescription ?? Const.ptal
+                    print("error addFriend(): deleteOld " + err)
                     return
                 }
                 let response = try? JSONSerialization.jsonObject(with: data)
                 if let response = response as? [String: Any] {
                     if let err = response["error"] {
-                        print("error deleteOld: " + (err as! String))
+                        print("error addFriend(): deleteOld " + (err as! String))
                     }
                     else {
                         Const.friends.remove(at: Const.ecOldIndex!)
                     }
                 } else {
-                    print("deleteOld: response was not json")
+                    print("error addFreind(): deleteOld response was not json")
                 }
             }
             task.resume()
@@ -98,7 +98,7 @@ class AddFriendViewController: UIViewController {
         let task = URLSession.shared.dataTask(with: request) { data, resp, error in
             guard let data = data, error == nil else {
                 DispatchQueue.main.async {
-                    let err = error?.localizedDescription ?? "Please try again later"
+                    let err = error?.localizedDescription ?? Const.ptal
                     self.view.makeToast(err, duration: Const.tt(), position: .top)
                 }
                 return
@@ -111,15 +111,12 @@ class AddFriendViewController: UIViewController {
                     }
                 }
                 else {
-                    if let index = Const.ecOldIndex {
-                        Const.friends.remove(at: index)
-                    }
                     Const.friends.append(friend)
                 }
             } else {
-                print("addFriend: response was not json")
+                print("error addFriend(): response was not json")
                 DispatchQueue.main.async {
-                    self.view.makeToast("Please try again later", duration: Const.tt(), position: .top)
+                    self.view.makeToast(Const.ptal, duration: Const.tt(), position: .top)
                 }
             }
             Const.ecName = nil

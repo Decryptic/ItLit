@@ -70,7 +70,7 @@ class FriendsViewController: UIViewController, UITableViewDataSource, UITableVie
                 let task = URLSession.shared.dataTask(with: request) { data, resp, error in
                     guard let data = data, error == nil else {
                         DispatchQueue.main.async {
-                            let err = error?.localizedDescription ?? "Please try again later"
+                            let err = error?.localizedDescription ?? Const.ptal
                             self.view.makeToast(err, duration: Const.tt(), position: .top)
                         }
                         return
@@ -95,7 +95,7 @@ class FriendsViewController: UIViewController, UITableViewDataSource, UITableVie
                             }
                         }
                     } else {
-                        print("SetFriend: response was not json")
+                        print("error shortPress(): Friends response was not json")
                     }
                 }
                 task.resume()
@@ -126,7 +126,7 @@ class FriendsViewController: UIViewController, UITableViewDataSource, UITableVie
                     let task = URLSession.shared.dataTask(with: request) { data, resp, error in
                         guard let data = data, error == nil else {
                             DispatchQueue.main.async {
-                                let err = error?.localizedDescription ?? "Please try again later"
+                                let err = error?.localizedDescription ?? Const.ptal
                                 self.view.makeToast(err, duration: Const.tt(), position: .top)
                             }
                             return
@@ -146,9 +146,9 @@ class FriendsViewController: UIViewController, UITableViewDataSource, UITableVie
                             }
                         } else {
                             DispatchQueue.main.async {
-                                self.view.makeToast("Please try again later", duration: 2.0, position: .top)
+                                self.view.makeToast(Const.ptal, duration: 2.0, position: .top)
                             }
-                            print("DelFriend: response was not json")
+                            print("error longpress(): Friends response was not json")
                         }
                     }
                     task.resume()
@@ -204,7 +204,7 @@ class FriendsViewController: UIViewController, UITableViewDataSource, UITableVie
                 let task = URLSession.shared.dataTask(with: request) { data, resp, error in
                     guard let data = data, error == nil else {
                         DispatchQueue.main.async {
-                            let err = error?.localizedDescription ?? "Please try again later"
+                            let err = error?.localizedDescription ?? Const.ptal
                             self.view.makeToast(err, duration: Const.tt(), position: .top)
                         }
                         return
@@ -218,9 +218,9 @@ class FriendsViewController: UIViewController, UITableViewDataSource, UITableVie
                             // pic set
                         }
                     } else {
-                        print("SetPic: something went wrong")
+                        print("error imagePickerController(): Friends something went wrong")
                         DispatchQueue.main.async {
-                            self.view.makeToast("Please try again later", duration: Const.tt(), position: .top)
+                            self.view.makeToast(Const.ptal, duration: Const.tt(), position: .top)
                         }
                     }
                 }

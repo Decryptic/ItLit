@@ -208,13 +208,10 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
                         }
                     }
                     else {
-                        print("GetLit: server responded without friends")
+                        print("error getlit(): server responded without friends")
                     }
                 } else {
-                    print("Login: response was not json")
-                    DispatchQueue.main.async {
-                        self.view.makeToast("Please try again later", duration: Const.tt(), position: .top)
-                    }
+                    print("error getlit(): response was not json")
                 }
             }
             task.resume()

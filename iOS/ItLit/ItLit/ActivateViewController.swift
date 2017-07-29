@@ -45,7 +45,7 @@ class ActivateViewController : UIViewController {
         let task = URLSession.shared.dataTask(with: request) { data, resp, error in
             guard let data = data, error == nil else {
                 DispatchQueue.main.async {
-                    let err = error?.localizedDescription ?? "Please try again later"
+                    let err = error?.localizedDescription ?? Const.ptal
                     self.view.makeToast(err, duration: Const.tt(), position: .top)
                 }
                 return
@@ -64,9 +64,9 @@ class ActivateViewController : UIViewController {
                     self.dismiss(animated: true, completion: nil)
                 }
             } else {
-                print("Activate: response was not json")
+                print("error activate(): response was not json")
                 DispatchQueue.main.async {
-                    self.view.makeToast("Please try again later", duration: Const.tt(), position: .top)
+                    self.view.makeToast(Const.ptal, duration: Const.tt(), position: .top)
                 }
             }
         }

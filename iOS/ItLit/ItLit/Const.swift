@@ -11,6 +11,8 @@ import UIKit
 import CoreLocation
 
 class Const {
+    
+    public static var ptal = "Please try again later"
     public static func server(_ ep: String) -> String {
         return "https://www.itlit.io/" + ep
     }
