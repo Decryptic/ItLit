@@ -8,12 +8,15 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Objects;
 
-public class ContactsAdapter extends ArrayAdapter<Friend> {
+public class ContactsAdapter extends ArrayAdapter<HashMap<String, Object>> {
+
     public Context ctx;
-    public ArrayList<Friend> contacts;
+    public ArrayList<HashMap<String, Object>> contacts;
 
-    public ContactsAdapter(Context context, ArrayList<Friend> contacts) {
+    public ContactsAdapter(Context context, ArrayList<HashMap<String, Object>> contacts) {
         super(context, R.layout.contact_row);
         this.ctx = context;
         this.contacts = contacts;
@@ -24,28 +27,28 @@ public class ContactsAdapter extends ArrayAdapter<Friend> {
         LayoutInflater inflater = LayoutInflater.from(getContext());
         final View customRow = inflater.inflate(R.layout.contact_row, parent, false);
 
-        final Friend contact = contacts.get(position);
+        final HashMap<String, Object> contact = contacts.get(position);
 
         final CheckBox checkbox = (CheckBox)customRow.findViewById(R.id.checkbox);
-        checkbox.setChecked(contact.lit);
+        checkbox.setChecked((boolean)contact.get("lit"));
         checkbox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                contact.lit = checkbox.isChecked();
+                contact.put("lit", checkbox.isChecked());
             }
         });
 
         final TextView tvContactName = (TextView)customRow.findViewById(R.id.tvContactName);
-        tvContactName.setText(contact.name);
+        tvContactName.setText((String)contact.get("name"));
 
         final TextView tvContactFname = (TextView)customRow.findViewById(R.id.tvContactFname);
-        tvContactFname.setText(contact.fname);
+        tvContactFname.setText((String)contact.get("fname"));
 
         return customRow;
     }
 
     @Override
     public int getCount() {
-        return  contacts.size();
+        return contacts.size();
     }
 }

@@ -1,6 +1,5 @@
 package io.itlit.ItLit;
 
-import android.*;
 import android.Manifest;
 import android.app.Dialog;
 import android.content.Context;
@@ -8,11 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
-import android.location.Address;
-import android.location.Geocoder;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -37,15 +33,12 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import org.json.JSONObject;
-import java.util.List;
-import java.util.Locale;
 import android.net.Uri;
+import java.util.HashMap;
 
 public class TabFragment extends Fragment {
     static final String TNUM = "num";
     public int mNum;
-
-    public static GoogleMap googleMap;
 
     public static TabFragment newInstance(int num) {
         TabFragment f = new TabFragment();
@@ -89,27 +82,25 @@ public class TabFragment extends Fragment {
                     if (i == 0)
                         return; // do nothing if the selfie row is clicked
 
-                    final int j = i;
+                    final int j =  i - 1;
                     final View v = view;
                     final TextView tvName = (TextView) v.findViewById(R.id.tvName);
-                    Thread t = new Thread(new Runnable() {
+                    new Thread(new Runnable() {
                         @Override
-                        public void run() { // Change the little light bulb on the server
-                            final Friend f = Friends.friends.get(j);
-                            if (f == null)
-                                return; // This should never happen with the previous return
+                        public void run() { // Change the candle
 
+                            final HashMap<String, Object> f = Friends.friends.get(j);
                             try {
                                 JSONObject auth = new JSONObject();
-                                auth.put("uname", User.uname);
-                                auth.put("passwd", User.passwd);
+                                auth.put("uname", Const.uname);
+                                auth.put("passwd", Const.passwd);
                                 JSONObject fren = new JSONObject();
-                                fren.put("fname", f.fname);
-                                fren.put("name", f.name);
-                                fren.put("lit", !f.lit);
+                                fren.put("fname", (String)f.get("fname"));
+                                fren.put("name", (String)f.get("name"));
+                                fren.put("lit", (boolean)f.get("lit"));
                                 auth.put("friend", fren);
-
                                 JSONObject resp = new JSONObject(Network.setfriend(auth.toString()));
+
                                 if (resp.has("error")) {
                                     final String error = resp.getString("error");
                                     getActivity().runOnUiThread(new Runnable() {
@@ -118,65 +109,66 @@ public class TabFragment extends Fragment {
                                             Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
                                         }
                                     });
-                                } else { // If the server flipped the little bulb, flip the little bulb
-                                    f.lit = !f.lit;
+                                } else { // If the server switched the candle, switch it
+                                    f.put("lit", !(boolean)f.get("lit"));
                                     getActivity().runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
                                             Drawable img;
-                                            img = getContext().getDrawable(f.lit ? R.drawable.candleon : R.drawable.candleoff);
+                                            img = getContext().getDrawable((boolean)f.get("lit") ? R.drawable.candleon : R.drawable.candleoff);
                                             tvName.setCompoundDrawablesWithIntrinsicBounds(null, null, img, null);
                                         }
                                     });
                                 }
                             } catch (Exception e) {
-                                String whatdo = f.lit ? "unlighting" : "lighting";
-                                final String error = "Please try " + whatdo + " fam later";
                                 getActivity().runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Toast.makeText(rootView.getContext(), error, Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(rootView.getContext(), Const.ptal, Toast.LENGTH_SHORT).show();
                                     }
                                 });
                                 e.printStackTrace();
                             }
                         }
-                    });
-                    t.start();
+                    }).start();
                 }
             });
 
             listview.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                 @Override
                 public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) { // Edit / delete friend
-                    final Friend f = Friends.friends.get(i);
-                    if (f == null)
-                        return false; // can't delete the selfie row
+                    if (i == 0)
+                        return false;
+                    final int j = i - 1;
+                    final HashMap<String, Object> f = Friends.friends.get(j);
 
                     DialogInterface.OnClickListener noyes = new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             switch (i) {
+
                                 case DialogInterface.BUTTON_POSITIVE: // Edit friend
                                     Intent editIntent = new Intent(getActivity(), AddActivity.class);
-                                    editIntent.putExtra("fname", f.fname);
-                                    editIntent.putExtra("name", f.name);
+                                    Const.ecFname = (String)f.get("fname");
+                                    Const.ecName  = (String)f.get("name");
+                                    Const.ecOldIndex = j;
                                     getActivity().startActivity(editIntent);
                                     break;
+
                                 case DialogInterface.BUTTON_NEGATIVE: // Delete friend
-                                    Thread t = new Thread(new Runnable() {
+                                    new Thread(new Runnable() {
                                         @Override
                                         public void run() {
                                             try {
                                                 JSONObject auth = new JSONObject();
-                                                auth.put("uname", User.uname);
-                                                auth.put("passwd", User.passwd);
+                                                auth.put("uname", Const.uname);
+                                                auth.put("passwd", Const.passwd);
                                                 JSONObject fren = new JSONObject();
-                                                fren.put("fname", f.fname);
-                                                fren.put("name", f.name);
+                                                fren.put("fname", (String)f.get("fname"));
+                                                fren.put("name", (String)f.get("name"));
                                                 auth.put("friend", fren);
-
                                                 JSONObject resp = new JSONObject(Network.delfriend(auth.toString()));
+
                                                 if (resp.has("error")) {
                                                     final String error = resp.getString("error");
                                                     getActivity().runOnUiThread(new Runnable() {
@@ -192,14 +184,14 @@ public class TabFragment extends Fragment {
                                                 getActivity().runOnUiThread(new Runnable() {
                                                     @Override
                                                     public void run() {
-                                                        Toast.makeText(getContext(), "Please try deleting again later", Toast.LENGTH_SHORT).show();
+                                                        Toast.makeText(getContext(), Const.ptal, Toast.LENGTH_SHORT).show();
                                                     }
                                                 });
                                             }
                                         }
-                                    });
-                                    t.start();
+                                    }).start();
                                     break;
+
                                 default:
                                     dialogInterface.dismiss();
                             }
@@ -207,7 +199,7 @@ public class TabFragment extends Fragment {
                     };
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                    builder.setMessage(f.name + "\n\n" + f.fname);
+                    builder.setMessage((String)f.get("name") + "\n\n" + (String)f.get("fname"));
                     builder.setPositiveButton("Edit", noyes);
                     builder.setNegativeButton("Delete", noyes);
                     builder.show();
@@ -234,22 +226,22 @@ public class TabFragment extends Fragment {
                 mapFragment.getMapAsync(new OnMapReadyCallback() {
                     @Override
                     public void onMapReady(GoogleMap gm) {
-                        googleMap = gm;
-                        googleMap.getUiSettings().setTiltGesturesEnabled(false);
-                        googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                        Const.googleMap = gm;
+                        Const.googleMap.getUiSettings().setTiltGesturesEnabled(false);
+                        Const.googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                             @Override
                             public boolean onMarkerClick(final Marker marker) {
                                 getActivity().runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        if (googleMap != null) {
-                                            float newZoom = googleMap.getCameraPosition().zoom;
+                                        if (Const.googleMap != null) {
+                                            float newZoom = Const.googleMap.getCameraPosition().zoom;
                                             if (newZoom < 7.2f) {
                                                 newZoom = 10.0f;
                                             } else if (newZoom < 10.3f) {
                                                 newZoom = 18.0f;
                                             }
-                                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), newZoom));
+                                            Const.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), newZoom));
                                         }
                                     }
                                 });
@@ -257,14 +249,14 @@ public class TabFragment extends Fragment {
                             }
                         });
 
-                        googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+                        Const.googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
                             @Override
                             public void onMapLongClick(final LatLng latLng) {
                                 getActivity().runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        if (googleMap != null) {
-                                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 3.0f));
+                                        if (Const.googleMap != null) {
+                                            Const.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 3.0f));
                                         }
                                     }
                                 });
@@ -272,7 +264,7 @@ public class TabFragment extends Fragment {
                         });
 
                         final View statusWindow = getActivity().getLayoutInflater().inflate(R.layout.status_window, null);
-                        googleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+                        Const.googleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
                             @Override
                             public View getInfoWindow(Marker marker) {
                                 return null; // name\n\nstatus\n\nbusiness name or st address part only
@@ -333,7 +325,7 @@ public class TabFragment extends Fragment {
                                 return statusWindow;
                             }
                         });
-                        googleMap.setOnInfoWindowLongClickListener(new GoogleMap.OnInfoWindowLongClickListener() {
+                        Const.googleMap.setOnInfoWindowLongClickListener(new GoogleMap.OnInfoWindowLongClickListener() {
                             @Override
                             public void onInfoWindowLongClick(Marker marker) {
                                 Intent textIntent = new Intent(Intent.ACTION_VIEW);
@@ -341,7 +333,7 @@ public class TabFragment extends Fragment {
                                 startActivity(textIntent);
                             }
                         });
-                        googleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                        Const.googleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                             @Override
                             public void onInfoWindowClick(Marker marker) {
                                 if (marker.isInfoWindowShown())
@@ -363,7 +355,7 @@ public class TabFragment extends Fragment {
                 });
             }
 
-            Faces.nullpic = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.nullpic);
+            Const.nullpic = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.nullpic);
 
             return rootView;
         } else if (page == 1) { // light tab
@@ -373,8 +365,10 @@ public class TabFragment extends Fragment {
             tvLogout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    SharedPreferences settings = getContext().getSharedPreferences(Util.userprefs(), Context.MODE_PRIVATE);
-                    User.forgetMe(settings.edit());
+                    SharedPreferences settings = getContext().getSharedPreferences(Const.userprefs, Context.MODE_PRIVATE);
+                    settings.edit().remove("uname");
+                    settings.edit().remove("passwd");
+                    settings.edit().commit();
                     getActivity().onBackPressed();
                 }
             });
@@ -383,11 +377,11 @@ public class TabFragment extends Fragment {
             final EditText etStatus = (EditText) rootView.findViewById(R.id.etStatus);
 
             final ImageView ivLight = (ImageView) rootView.findViewById(R.id.ivLight);
-            if (!User.lit) {
-                ivLight.setImageResource(R.drawable.lightoff);
+            if (Const.lit) {
+                ivLight.setImageResource(R.drawable.lighton);
             }
             else {
-                ivLight.setImageResource(R.drawable.lighton);
+                ivLight.setImageResource(R.drawable.lightoff);
             }
             ivLight.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -402,16 +396,16 @@ public class TabFragment extends Fragment {
                     else {
                         final ImageView ivLight = (ImageView) getActivity().findViewById(R.id.ivLight);
                         final TextView tvLighttalk = (TextView) getActivity().findViewById(R.id.tvLighttalk);
-                        Thread t = new Thread(new Runnable() {
+                        new Thread(new Runnable() {
                             @Override
                             public void run() {
                                 try {
                                     JSONObject auth = new JSONObject();
-                                    auth.put("uname", User.uname);
-                                    auth.put("passwd", User.passwd);
-                                    auth.put("lit", !User.lit);
-
+                                    auth.put("uname", Const.uname);
+                                    auth.put("passwd", Const.passwd);
+                                    auth.put("lit", !Const.lit);
                                     JSONObject resp = new JSONObject(Network.light(auth.toString()));
+
                                     if (resp.has("error")) {
                                         final String error = resp.getString("error");
                                         getActivity().runOnUiThread(new Runnable() {
@@ -421,15 +415,13 @@ public class TabFragment extends Fragment {
                                             }
                                         });
                                     } else {
-                                        User.setLight(!User.lit);
-                                        if (User.lit)
+                                        Const.lit = !Const.lit;
+                                        if (Const.lit)
                                             getActivity().startService(new Intent(getContext(), GPSService.class));
                                         else
                                             getActivity().stopService(new Intent(getContext(), GPSService.class));
-                                        final int d = User.lit ? R.drawable.lighton : R.drawable.lightoff;
-                                        String offline = "offline";
-                                        String online = "friends can see you";
-                                        final String s = User.lit ? online : offline;
+                                        final int d = Const.lit ? R.drawable.lighton : R.drawable.lightoff;
+                                        final String s = Const.lit ? "friends can see you" : "offline";
 
                                         getActivity().runOnUiThread(new Runnable() {
                                             @Override
@@ -441,17 +433,15 @@ public class TabFragment extends Fragment {
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();
-                                    final String error = "Please try lighting up later";
                                     getActivity().runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            Toast.makeText(rootView.getContext(), error, Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(rootView.getContext(), Const.ptal, Toast.LENGTH_SHORT).show();
                                         }
                                     });
                                 }
                             }
-                        });
-                        t.start();
+                        }).start();
                     }
                 }
             });
@@ -466,51 +456,48 @@ public class TabFragment extends Fragment {
                     int len = etStatus.getText().toString().length();
                     if (len <= 50) {
                         tvChars.setText(len + " characters");
-                    }
 
-                    final String status = etStatus.getText().toString();
-                    Thread t = new Thread(new Runnable() {
-                        @Override
-                        public void run() { // Send status to server
-                            try {
-                                JSONObject auth = new JSONObject();
-                                auth.put("uname", User.uname);
-                                auth.put("passwd", User.passwd);
-                                auth.put("status", status);
+                        final String status = etStatus.getText().toString();
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() { // Send status to server, inefficient?
+                                try {
+                                    JSONObject auth = new JSONObject();
+                                    auth.put("uname", Const.uname);
+                                    auth.put("passwd", Const.passwd);
+                                    auth.put("status", status);
+                                    JSONObject respStatus = new JSONObject(Network.status(auth.toString()));
 
-                                JSONObject respStatus = new JSONObject(Network.status(auth.toString()));
-                                if (respStatus.has("error")) {
-                                    final String error = respStatus.getString("error");
-                                    getActivity().runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                                }
-                            } catch (Exception e) {
-                                getActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(getContext(), "Error posting status to server", Toast.LENGTH_SHORT).show();
+                                    if (respStatus.has("error")) {
+                                        final String error = respStatus.getString("error");
+                                        getActivity().runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
                                     }
-                                });
+                                } catch (Exception e) {
+                                    System.out.println("error onCreateView(): couldn't post status");
+                                }
                             }
-                        }
-                    });
-                    t.start();
-                } // this might not be the most efficient way to do this
+                        }).start();
+                    }
+                    else {
+                        etStatus.setText(etStatus.getText().toString().substring(0, len-1));
+                    }
+                }
             });
 
-            Thread tstat = new Thread(new Runnable() {
+            new Thread(new Runnable() {
                 @Override
                 public void run() { // get status on startup
                     try {
                         JSONObject jsob = new JSONObject();
-                        jsob.put("uname", User.uname);
-                        jsob.put("passwd", User.passwd);
-
+                        jsob.put("uname", Const.uname);
+                        jsob.put("passwd", Const.passwd);
                         JSONObject respStat = new JSONObject(Network.statusget(jsob.toString()));
+
                         if (respStat.has("error")) {
                             final String error = respStat.getString("error");
                             getActivity().runOnUiThread(new Runnable() {
@@ -529,16 +516,10 @@ public class TabFragment extends Fragment {
                             });
                         }
                     } catch (Exception e) {
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(getContext(), "Error getting status from server", Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                        System.out.println("error onCreateView(): couldn't get status");
                     }
                 }
-            });
-            tstat.start();
+            }).start();
 
             return rootView;
         }

@@ -48,7 +48,7 @@ public class Network {
             } else throw new Exception();
         } catch (Exception e) {
             e.printStackTrace();
-            return Faces.nullpic;
+            return Const.nullpic;
         }
     }
 
@@ -72,14 +72,14 @@ public class Network {
 
             out.writeBytes("--" + border + "\r\n");
             out.writeBytes("Content-Disposition: form-data; name=\"uname\"\r\n\r\n");
-            out.writeBytes(User.uname);
+            out.writeBytes(Const.uname);
 
             out.writeBytes("\r\n--" + border + "\r\n");
             out.writeBytes("Content-Disposition: form-data; name=\"passwd\"\r\n\r\n");
-            out.writeBytes(User.passwd);
+            out.writeBytes(Const.passwd);
 
             out.writeBytes("\r\n--" + border + "\r\n");
-            out.writeBytes("Content-Disposition: form-data; name=\"file\"; filename=\"" + User.uname + ".png\"\r\n");
+            out.writeBytes("Content-Disposition: form-data; name=\"file\"; filename=\"" + Const.uname + ".png\"\r\n");
             out.writeBytes("Content-Type: application/octet-stream\r\n\r\n");
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             bm.compress(Bitmap.CompressFormat.PNG, 100, stream);

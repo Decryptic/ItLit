@@ -26,17 +26,16 @@ public class GetLit extends AsyncTask<Activity, Void, Void> {
             return null;
         Activity ui = activities[0];
 
-        if (TabFragment.googleMap != null) {
+        if (Const.googleMap != null) {
             try {
                 JSONObject auth = new JSONObject();
-                auth.put("uname", User.uname);
-                auth.put("passwd", User.passwd);
+                auth.put("uname", Const.uname);
+                auth.put("passwd", Const.passwd);
 
                 final JSONObject resp = new JSONObject(Network.getlit(auth.toString()));
                 if (resp.has("error")) {
                     return null;
                 } else if (resp.has("friends")) {
-
                     ui.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -46,7 +45,6 @@ public class GetLit extends AsyncTask<Activity, Void, Void> {
                                 HashMap<String, Marker> newMarkers = new HashMap<>();
                                 int i;
                                 for (i = 0; i < frens.length(); i++) {
-
                                     JSONObject fren = frens.getJSONObject(i);
                                     MarkerOptions mo = new MarkerOptions();
                                     final String fname = fren.getString("fname");
@@ -55,30 +53,31 @@ public class GetLit extends AsyncTask<Activity, Void, Void> {
                                     mo.position(latlon);
                                     final Bitmap icon;
 
-                                    if (Faces.has(fname)) {
-                                        icon = Faces.get(fname);
+                                    if (Friends.faces.containsKey(fname)) {
+                                        icon = Friends.faces.get(fname);
                                     } else {
-                                        icon = Faces.nullpic;
+                                        icon = Const.nullpic;
                                         // If the friend's icon is not already cached, try to download it
                                         new Thread(new Runnable() {
                                             @Override
                                             public void run() {
                                                 try {
                                                     JSONObject jsob = new JSONObject();
-                                                    jsob.put("uname", User.uname);
-                                                    jsob.put("passwd", User.passwd);
+                                                    jsob.put("uname", Const.uname);
+                                                    jsob.put("passwd", Const.passwd);
                                                     jsob.put("fname", fname);
 
                                                     Bitmap bmp = Network.getpic(jsob.toString());
-                                                    Faces.add(fname, Faces.getCroppedBitmap(bmp, bmp.getWidth()));
+                                                    Friends.faces.put(fname, Const.getCroppedBitmap(bmp, bmp.getWidth()));
                                                 } catch (Exception e) {
+                                                    System.out.println("error doInBackground(): GetLit" + e.getMessage());
                                                 }
                                             }
                                         }).start();
                                     }
 
-                                    float zoom = TabFragment.googleMap.getCameraPosition().zoom;
-                                    int side = Faces.scaleSize(zoom);
+                                    float zoom = Const.googleMap.getCameraPosition().zoom;
+                                    int side = Const.scaleSize(zoom);
                                     mo.icon(BitmapDescriptorFactory.fromBitmap(Bitmap.createScaledBitmap(icon, side, side, false)));
 
                                     if (oldMarkers != null) {
@@ -91,16 +90,16 @@ public class GetLit extends AsyncTask<Activity, Void, Void> {
                                                 boolean b = oldm.isInfoWindowShown();
                                                 oldm.remove();
                                                 oldMarkers.remove(fname);
-                                                Marker newm = TabFragment.googleMap.addMarker(mo);
+                                                Marker newm = Const.googleMap.addMarker(mo);
                                                 newMarkers.put(fname, newm);
                                                 if (b)
                                                     newm.showInfoWindow();
                                             }
                                         } else {
-                                            newMarkers.put(fname, TabFragment.googleMap.addMarker(mo));
+                                            newMarkers.put(fname, Const.googleMap.addMarker(mo));
                                         }
                                     } else {
-                                        newMarkers.put(fname, TabFragment.googleMap.addMarker(mo));
+                                        newMarkers.put(fname, Const.googleMap.addMarker(mo));
                                     }
                                 }
                                 if (oldMarkers != null)
@@ -108,17 +107,15 @@ public class GetLit extends AsyncTask<Activity, Void, Void> {
                                         if (m != null)
                                             m.remove();
                                 oldMarkers = newMarkers;
-                                oldZoom = TabFragment.googleMap.getCameraPosition().zoom;
+                                oldZoom = Const.googleMap.getCameraPosition().zoom;
                             } catch (Exception e) {
-
+                                System.out.println("error doInBackground(): GetLit " + e.getMessage());
                             }
                         }
                     });
-
-
                 }
             } catch (Exception e) {
-
+                System.out.println("error doInBackground(): GetLit " + e.getMessage());
             }
         }
         return null;

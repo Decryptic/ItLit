@@ -18,12 +18,11 @@ public class GPSService extends Service {
     public GPSService() {
     }
 
-    public static Location lastKnown; // The last known location of the user
     private LocationManager locationManager;
     private LocationListener locationListener;
 
-    private final long TIME = 2000; // Every 2 seconds
-    private final float DIST = 5.0f; // Every 10 meters
+    private final long TIME = 10000; // Every 10 seconds
+    private final float DIST = 5.0f; // Every 5 meters
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -38,7 +37,7 @@ public class GPSService extends Service {
                 locationManager.removeUpdates(locationListener);
             }
         }
-        lastKnown = null;
+        Const.lastKnown = null;
     }
 
     @Override
@@ -49,25 +48,25 @@ public class GPSService extends Service {
             locationListener = new LocationListener() {
                 @Override
                 public void onLocationChanged(final Location location) {
-                    if (location.getLatitude() != 0.0f && location.getLongitude() != 0.0f && User.lit) {
-                        if (lastKnown == null) {
-                            lastKnown = location;
+                    if (location.getLatitude() != 0.0f && location.getLongitude() != 0.0f && Const.lit) {
+                        if (Const.lastKnown == null) {
+                            Const.lastKnown = location;
                         }
                         else {
-                            if (isBetterLocation(location, lastKnown)) {
-                                lastKnown = location;
+                            if (isBetterLocation(location, Const.lastKnown)) {
+                                Const.lastKnown = location;
                             }
                         }
                         Thread t = new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                if (lastKnown != null) {
+                                if (Const.lastKnown != null) {
                                     try {
                                         JSONObject auth = new JSONObject();
-                                        auth.put("uname", User.uname);
-                                        auth.put("passwd", User.passwd);
-                                        auth.put("lat", lastKnown.getLatitude());
-                                        auth.put("lon", lastKnown.getLongitude());
+                                        auth.put("uname", Const.uname);
+                                        auth.put("passwd", Const.passwd);
+                                        auth.put("lat", Const.lastKnown.getLatitude());
+                                        auth.put("lon", Const.lastKnown.getLongitude());
 
                                         JSONObject resp = new JSONObject(Network.move(auth.toString()));
                                         if (resp.has("error")) {

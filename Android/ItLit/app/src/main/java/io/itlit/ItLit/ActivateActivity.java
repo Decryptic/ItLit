@@ -12,22 +12,11 @@ import org.json.JSONObject;
 public class ActivateActivity extends AppCompatActivity {
 
     @Override
-    protected void onSaveInstanceState(Bundle b) {
-        super.onSaveInstanceState(b);
-
-        final EditText etCode = (EditText)findViewById(R.id.etCode);
-        b.putString("etCode", etCode.getText().toString());
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_activate);
 
         final EditText etCode = (EditText)findViewById(R.id.etCode);
-        if (savedInstanceState != null) {
-            etCode.setText(savedInstanceState.getString("etCode", ""));
-        }
         final Button btnActivate = (Button)findViewById(R.id.btnActivate);
 
         btnActivate.setOnClickListener(new View.OnClickListener() {
@@ -81,7 +70,7 @@ public class ActivateActivity extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast.makeText(getApplicationContext(), "Please try activating later", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), Const.ptal, Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }

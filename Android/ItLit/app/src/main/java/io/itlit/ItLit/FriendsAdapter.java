@@ -19,6 +19,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import java.util.ArrayList;
 import java.io.File;
+import java.util.HashMap;
+
 import android.provider.MediaStore;
 import android.net.Uri;
 import android.graphics.BitmapFactory;
@@ -26,13 +28,17 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
-public class FriendsAdapter extends ArrayAdapter<Friend> {
+public class FriendsAdapter extends ArrayAdapter<HashMap<String, Object>> {
+
     public Context ctx;
     public Activity act;
-    public FriendsAdapter(Context context, ArrayList<Friend> friends, Activity act) {
-        super(context, R.layout.friend_row, friends);
+    public ArrayList<HashMap<String, Object>> friends;
+
+    public FriendsAdapter(Context context, ArrayList<HashMap<String, Object>> friends, Activity act) {
+        super(context, R.layout.friend_row);
         this.ctx = context;
         this.act = act;
+        this.friends = friends;
     }
 
     @Override
@@ -40,11 +46,13 @@ public class FriendsAdapter extends ArrayAdapter<Friend> {
         LayoutInflater inflater = LayoutInflater.from(getContext());
         final View customRow;
 
-        if (position == 0) { // index 0 is null in the listview
+        int pos = position - 1;
+
+        if (pos == -1) { // selfie row
             customRow = inflater.inflate(R.layout.selfie_row, parent, false);
 
             final RoundedImageView riv = (RoundedImageView)customRow.findViewById(R.id.selfie);
-            User.rivSelfie = riv;
+            Const.rivSelfie = riv; // For MainActivity
 
             int permission = ActivityCompat.checkSelfPermission(ctx, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
             if (permission != PackageManager.PERMISSION_GRANTED) {
@@ -52,7 +60,7 @@ public class FriendsAdapter extends ArrayAdapter<Friend> {
             }
             else {
                 File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-                File file = new File(dir.getAbsolutePath() + "/" + User.selfiepng());
+                File file = new File(dir.getAbsolutePath() + "/" + Const.selfiepng());
                 if (!file.exists() || file.isDirectory())
                     riv.setImageResource(R.drawable.nullpic);
                 else {
@@ -75,7 +83,7 @@ public class FriendsAdapter extends ArrayAdapter<Friend> {
                         if (takePictureIntent.resolveActivity(ctx.getPackageManager()) != null) {
                             try {
                                 File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-                                File file = new File(dir.getAbsolutePath() + "/" + User.selfiepng());
+                                File file = new File(dir.getAbsolutePath() + "/" + Const.selfiepng());
                                 Uri provider = FileProvider.getUriForFile(ctx, ctx.getApplicationContext().getPackageName() + ".provider", file);
                                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, provider);
                                 act.startActivityForResult(takePictureIntent, 0);
@@ -90,7 +98,7 @@ public class FriendsAdapter extends ArrayAdapter<Friend> {
                                 });
                             }
                         } else {
-                            final String error = "Could not open up camera";
+                            final String error = "Could not open camera";
                             act.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -103,7 +111,7 @@ public class FriendsAdapter extends ArrayAdapter<Friend> {
             });
 
             final TextView tvPhone = (TextView)customRow.findViewById(R.id.tvPhone);
-            tvPhone.setText(User.uname);
+            tvPhone.setText(Const.uname);
 
             final Button btnAddFriend = (Button)customRow.findViewById(R.id.btnAddFriend);
             btnAddFriend.setOnClickListener(new View.OnClickListener() {
@@ -138,19 +146,25 @@ public class FriendsAdapter extends ArrayAdapter<Friend> {
             TextView tvName = (TextView)customRow.findViewById(R.id.tvName);
             TextView tvFname = (TextView)customRow.findViewById(R.id.tvFname);
 
-            Friend friend = Friends.friends.get(position);
+            HashMap<String, Object> friend = friends.get(pos);
             if (friend != null) {
-                tvFname.setText(friend.fname);
-                tvName.setText(friend.name);
+                tvFname.setText((String)friend.get("fname"));
+                tvName.setText((String)friend.get("name"));
+                boolean lit = (boolean)friend.get("lit");
                 Drawable img;
-                img = getContext().getDrawable(friend.lit ? R.drawable.candleon : R.drawable.candleoff);
+                img = getContext().getDrawable(lit ? R.drawable.candleon : R.drawable.candleoff);
                 tvName.setCompoundDrawablesWithIntrinsicBounds(null, null, img, null);
             }
             else {
-                System.out.println("this should really never happen");
+                System.out.println("error getView(): FriendsAdapter friend not found");
             }
         }
 
         return customRow;
+    }
+
+    @Override
+    public int getCount() {
+        return friends.size() + 1;
     }
 }

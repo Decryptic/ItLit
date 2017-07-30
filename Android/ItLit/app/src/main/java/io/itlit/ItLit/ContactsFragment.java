@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 public class ContactsFragment extends Fragment {
 
@@ -30,48 +31,51 @@ public class ContactsFragment extends Fragment {
     private TextView tvLoading;
     private Button btnImport;
 
-    public static ArrayList<Friend> contacts;
-
     private void loadContacts() {
-        contacts = new ArrayList<>();
+        Friends.contacts = new ArrayList<>();
 
         Cursor phones = getContext().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,null,null,null);
         while (phones.moveToNext())
         {
             String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
             String phone = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-            phone = Util.phonify(phone);
+            phone = Const.phonify(phone);
 
-            ArrayList<Friend> friends = new ArrayList<>();
-            for (Friend friend : Friends.friends) {
+            ArrayList<HashMap<String, Object>> friends = new ArrayList<>();
+            for (HashMap<String, Object> friend : Friends.friends) {
                 if (friend != null) {
                     friends.add(friend);
                 }
             }
             boolean check = false;
-            for (Friend f : friends) {
-                if (f.name.equals(name) && f.fname.equals(phone))
+            for (HashMap<String, Object> f : friends) {
+                if (((String)f.get("name")).equals(name) && ((String)f.get("fname")).equals(phone))
                     check = true;
             }
-            contacts.add(new Friend(phone, name, check));
+
+            HashMap<String, Object> friend = new HashMap<>();
+            friend.put("fname", phone);
+            friend.put("name", name);
+            friend.put("lit", check);
+            Friends.contacts.add(friend);
         }
         phones.close();
     }
 
-    private ArrayList<Friend> filterContacts(String key) {
-        ArrayList<Friend> newContacts = new ArrayList<>();
+    private ArrayList<HashMap<String, Object>> filterContacts(String key) {
+        ArrayList<HashMap<String, Object>> newContacts = new ArrayList<>();
         if (key.equals(""))
-            return new ArrayList<>(contacts);
-        for (Friend c : contacts) {
-            if (c.name.toLowerCase().contains(key.toLowerCase()) || c.fname.toLowerCase().contains(key.toLowerCase()))
-                newContacts.add(c);
+            return new ArrayList<>(Friends.contacts);
+        for (HashMap<String, Object> entry : Friends.contacts) {
+            if (((String)entry.get("name")).toLowerCase().contains(key.toLowerCase()) || ((String)entry.get("fname")).toLowerCase().contains(key.toLowerCase()))
+                newContacts.add(entry);
         }
         return newContacts;
     }
 
-    private void updateContacts(ArrayList<Friend> list) {
+    private void updateContacts(ArrayList<HashMap<String, Object>> list) {
         if (listviewContacts != null && list != null) {
-            Collections.sort(list);
+            // TODO Collections.sort(list);
             ContactsAdapter adapter = new ContactsAdapter(getContext(), list);
             listviewContacts.setAdapter(adapter);
         }
@@ -89,13 +93,6 @@ public class ContactsFragment extends Fragment {
         btnImport = (Button)view.findViewById(R.id.btnImport);
 
         return view;
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle b) {
-        super.onSaveInstanceState(b);
-
-        b.putString("etSearch", etSearch.getText().toString());
     }
 
     @Override
@@ -119,12 +116,13 @@ public class ContactsFragment extends Fragment {
         btnImport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Friends.addContacts(contacts);
+                // TODO
+                Friends.addContacts(Friends.contacts);
                 getActivity().finish();
             }
         });
 
         loadContacts();
-        updateContacts(contacts);
+        updateContacts(Friends.contacts);
     }
 }

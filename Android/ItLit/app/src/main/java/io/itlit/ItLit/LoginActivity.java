@@ -45,24 +45,24 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final String uname = Util.phonify(etUname.getText().toString());
+                final String uname = Const.phonify(etUname.getText().toString());
                 final String passwd = etPasswd.getText().toString();
-                final String shapasswd = Util.sha256(passwd);
+                final String shapasswd = Const.sha256(passwd);
 
                 String err = errorless(uname, passwd);
                 if (err != null) {
                     Toast.makeText(getApplicationContext(), err, Toast.LENGTH_SHORT).show();
                     return;
                 }
-                Thread t = new Thread(new Runnable() {
+                new Thread(new Runnable() {
                     @Override
                     public void run() {
                         try {
                             JSONObject auth = new JSONObject();
                             auth.put("uname", uname);
                             auth.put("passwd", shapasswd);
-
                             JSONObject resp = new JSONObject(Network.login(auth.toString()));
+
                             if (resp.has("error")) {
                                 final String error = resp.getString("error");
                                 LoginActivity.this.runOnUiThread(new Runnable() {
@@ -73,9 +73,15 @@ public class LoginActivity extends AppCompatActivity {
                                 });
                             }
                             else {
-                                User.setUser(uname, shapasswd);
-                                SharedPreferences settings = getApplicationContext().getSharedPreferences(Util.userprefs(), Context.MODE_PRIVATE);
-                                User.rememberMe(settings.edit());
+                                Const.uname = uname;
+                                Const.passwd = shapasswd;
+                                Const.lit = false;
+
+                                SharedPreferences settings = getApplicationContext().getSharedPreferences(Const.userprefs, Context.MODE_PRIVATE);
+                                settings.edit().putString("uname", uname);
+                                settings.edit().putString("passwd", passwd);
+                                settings.edit().commit();
+
                                 Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
                                 LoginActivity.this.startActivity(mainIntent);
                             }
@@ -84,29 +90,29 @@ public class LoginActivity extends AppCompatActivity {
                             LoginActivity.this.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast.makeText(getApplicationContext(), "Please try logging in again later", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), Const.ptal, Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }
                     }
-                });
-                t.start();
+                }).start();
             }
         });
 
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String uname = Util.phonify(etUname.getText().toString());
+                final String uname = Const.phonify(etUname.getText().toString());
                 final String passwd = etPasswd.getText().toString();
-                final String shapasswd = Util.sha256(passwd);
+                final String shapasswd = Const.sha256(passwd);
 
                 String err = errorless(uname, passwd);
                 if (err != null) {
                     Toast.makeText(getApplicationContext(), err, Toast.LENGTH_SHORT).show();
                     return;
                 }
-                Thread t = new Thread(new Runnable() {
+
+                new Thread(new Runnable() {
                     @Override
                     public void run() {
                         try {
@@ -135,23 +141,22 @@ public class LoginActivity extends AppCompatActivity {
                             LoginActivity.this.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast.makeText(getApplicationContext(), "Please try registering again later", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), Const.ptal, Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }
                     }
-                });
-                t.start();
+                }).start();
             }
         });
 
-        SharedPreferences settings = getApplicationContext().getSharedPreferences(Util.userprefs(), Context.MODE_PRIVATE);
+        SharedPreferences settings = getApplicationContext().getSharedPreferences(Const.userprefs, Context.MODE_PRIVATE);
         if (settings.contains("uname") && settings.contains("passwd")) {
             final String uname = settings.getString("uname", "");
             etUname.setText(uname);
             final String passwd = settings.getString("passwd", "");
             if (!uname.equals("") && !passwd.equals("")){
-                Thread t = new Thread(new Runnable() {
+                new Thread(new Runnable() {
                     @Override
                     public void run() {
                         try {
@@ -169,22 +174,19 @@ public class LoginActivity extends AppCompatActivity {
                                     }
                                 });
                             } else {
-                                User.setUser(uname, passwd);
+                                Const.uname = uname;
+                                Const.passwd = passwd;
+                                Const.lit = false;
+
                                 Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
                                 LoginActivity.this.startActivity(mainIntent);
                             }
                         }
                         catch (Exception e) {
-                            LoginActivity.this.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(getApplicationContext(), "Server is talking gibberish", Toast.LENGTH_SHORT).show();
-                                }
-                            });
+                            System.out.println("error onCreate(): LoginActitity " + e.getMessage());
                         }
                     }
-                });
-                t.start();
+                }).start();
             }
         }
     }

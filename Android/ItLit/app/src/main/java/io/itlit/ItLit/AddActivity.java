@@ -9,6 +9,8 @@ import android.widget.EditText;
 import org.json.JSONObject;
 import android.widget.Toast;
 
+import java.util.HashMap;
+
 public class AddActivity extends AppCompatActivity {
 
     private String errorless(String name, String fname) {
@@ -22,34 +24,18 @@ public class AddActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle b) {
-        super.onSaveInstanceState(b);
-
-        final EditText etName = (EditText)findViewById(R.id.etName);
-        final EditText etFname = (EditText)findViewById(R.id.etFname);
-        b.putString("etName", etName.getText().toString());
-        b.putString("etFname", etFname.getText().toString());
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
 
         final EditText etName = (EditText)findViewById(R.id.etName);
         final EditText etFname = (EditText)findViewById(R.id.etFname);
-        if (savedInstanceState != null) {
-            etName.setText(savedInstanceState.getString("etName", ""));
-            etFname.setText(savedInstanceState.getString("etFname", ""));
+
+        if (Const.ecFname != null) {
+            etName.setText(Const.ecName);
+            etFname.setText(Const.ecFname);
         }
-        else {
-            String fn = getIntent().getStringExtra("fname");
-            String n  = getIntent().getStringExtra("name");
-            if (fn != null)
-                etFname.setText(fn);
-            if (n != null)
-                etName.setText(n);
-        }
+
         final Button btnAdd = (Button)findViewById(R.id.btnAdd);
         final Button btnAddCancel = (Button)findViewById(R.id.btnAddCancel);
 
@@ -63,12 +49,51 @@ public class AddActivity extends AppCompatActivity {
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 final String name = etName.getText().toString();
-                final String fname = Util.phonify(etFname.getText().toString());
+                final String fname = Const.phonify(etFname.getText().toString());
+
                 String error = errorless(name, fname);
                 if (error != null) {
                     Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
                     return;
+                }
+
+                boolean deleteOld = false;
+                String oldUname = "";
+                if (Const.ecOldIndex != null) {
+                    oldUname = (String)Friends.friends.get(Const.ecOldIndex).get("fname");
+                    deleteOld = !oldUname.equals(fname);
+                }
+                final String foldUname = oldUname;
+
+                if (deleteOld) {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                JSONObject auth = new JSONObject();
+                                auth.put("uname", Const.uname);
+                                auth.put("passwd", Const.passwd);
+                                JSONObject fren = new JSONObject();
+                                fren.put("fname", foldUname);
+                                fren.put("name", name);
+                                fren.put("lit", false);
+                                auth.put("friend", fren);
+                                JSONObject resp = new JSONObject(Network.delfriend(auth.toString()));
+                                if (resp.has("error")) {
+                                    final String error = resp.getString("error");
+                                    System.out.println(error);
+                                }
+                                else {
+                                    Friends.friends.remove(Const.ecOldIndex);
+                                }
+                            }
+                            catch (Exception e) {
+                                System.out.println(e.toString());
+                            }
+                        }
+                    }).start();
                 }
 
                 new Thread(new Runnable() {
@@ -76,8 +101,8 @@ public class AddActivity extends AppCompatActivity {
                     public void run() {
                         try {
                             JSONObject auth = new JSONObject();
-                            auth.put("uname", User.uname);
-                            auth.put("passwd", User.passwd);
+                            auth.put("uname", Const.uname);
+                            auth.put("passwd", Const.passwd);
                             JSONObject fren = new JSONObject();
                             fren.put("fname", fname);
                             fren.put("name", name);
@@ -94,16 +119,26 @@ public class AddActivity extends AppCompatActivity {
                                 });
                             }
                             else {
-                                Friends.updateFriends();
+                                HashMap<String, Object> friend = new HashMap<String, Object>();
+                                friend.put("fname", fname);
+                                friend.put("name", name);
+                                friend.put("lit", false);
+                                Friends.friends.add(friend);
                             }
+
+                            Const.ecName = null;
+                            Const.ecFname = null;
+                            Const.ecOldIndex = null;
+
+                            Friends.updateFriends();
+
                             AddActivity.this.finish();
                         }
                         catch (Exception e) {
-                            final String error = "Please try adding this friend later";
                             AddActivity.this.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), Const.ptal, Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }

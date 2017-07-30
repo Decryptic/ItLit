@@ -28,7 +28,9 @@ import java.io.FileOutputStream;
 
 public class MainActivity extends AppCompatActivity {
 
-    // Instantiated by TabFragment, every 2.5 seconds, get the names and faces of lit friends
+    private int TIME = 3000;
+
+    // Instantiated by TabFragment, every 3 seconds, get the names and faces of lit friends
     private TimerTask getlit() {
         return new TimerTask() {
             @Override
@@ -77,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 if (position == 2) {
                     getlitTimer = new Timer();
-                    getlitTimer.scheduleAtFixedRate(getlit(), 0, 2000);
+                    getlitTimer.scheduleAtFixedRate(getlit(), 0, TIME);
                 }
 
                 InputMethodManager inputMethodManager =
@@ -92,20 +94,20 @@ public class MainActivity extends AppCompatActivity {
             public void onPageScrollStateChanged(int state) {}
         });
 
-        Friends.deleteAll();
+        Friends.init();
     }
 
     @Override
     public void onBackPressed() {
         if (mViewPager.getCurrentItem() == 1) {
             destroyTimer();
-            Thread t = new Thread(new Runnable() {
+            new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         JSONObject auth = new JSONObject();
-                        auth.put("uname", User.uname);
-                        auth.put("passwd", User.passwd);
+                        auth.put("uname", Const.uname);
+                        auth.put("passwd", Const.passwd);
 
                         JSONObject respout = new JSONObject(Network.logout(auth.toString()));
                         if (respout.has("error")) {
@@ -119,11 +121,10 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                     catch (Exception e) {
-                        System.out.println("couldn't log out");
+                        System.out.println("error onBackPressed(): MainActivity couldn't log out");
                     }
                 }
-            });
-            t.start();
+            }).start();
             MainActivity.this.finish();
         }
         else {
@@ -136,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 0 && resultCode == Activity.RESULT_OK) {
             File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-            File file = new File(dir.getAbsolutePath() + "/" + User.selfiepng());
+            File file = new File(dir.getAbsolutePath() + "/" + Const.selfiepng());
             if (file.exists()) {
                 try {
                     Bitmap bm = BitmapFactory.decodeFile(file.getAbsolutePath());
@@ -170,18 +171,18 @@ public class MainActivity extends AppCompatActivity {
                     this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            User.rivSelfie.setImageBitmap(bmp);
+                            Const.rivSelfie.setImageBitmap(bmp);
                         }
                     });
 
                     final Bitmap icon = Bitmap.createScaledBitmap(bmp, 250, 250, false);
-                    Thread t = new Thread(new Runnable() {
+                    new Thread(new Runnable() {
                         @Override
                         public void run() {
                             try {
                                 JSONObject auth = new JSONObject();
-                                auth.put("uname", User.uname);
-                                auth.put("passwd", User.passwd);
+                                auth.put("uname", Const.uname);
+                                auth.put("passwd", Const.passwd);
 
                                 JSONObject resp = new JSONObject(Network.setpic(auth.toString(), icon));
                                 if (resp.has("error")) {
@@ -194,9 +195,8 @@ public class MainActivity extends AppCompatActivity {
                                     });
                                 }
                                 else {
-                                    if (Faces.has(User.uname)) {
-                                        Faces.remove(User.uname);
-                                        Faces.add(User.uname, Faces.getCroppedBitmap(icon, icon.getWidth()));
+                                    if (Friends.faces.containsKey(Const.uname)) {
+                                        Friends.faces.put(Const.uname, Const.getCroppedBitmap(icon, icon.getWidth()));
                                     }
                                 }
                             } catch (Exception e) {
@@ -209,11 +209,10 @@ public class MainActivity extends AppCompatActivity {
                                 });
                             }
                         }
-                    });
-                    t.start();
+                    }).start();
                 }
                 catch (Exception e) {
-                    System.out.println("file not found");
+                    System.out.println("error onActivityResult(): MainActivity file not found");
                 }
             }
         }

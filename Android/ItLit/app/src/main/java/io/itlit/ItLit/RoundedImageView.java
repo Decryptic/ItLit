@@ -40,7 +40,7 @@ public class RoundedImageView extends android.support.v7.widget.AppCompatImageVi
 
         int w = getWidth(), h = getHeight();
 
-        Bitmap roundBitmap = Faces.getCroppedBitmap(bitmap, w);
+        Bitmap roundBitmap = Const.getCroppedBitmap(bitmap, w);
         int height = getHeight();
         int width = (int)(getWidth() * ((double)height / roundBitmap.getHeight()));
         roundBitmap = Bitmap.createScaledBitmap(roundBitmap, width, height, true);
