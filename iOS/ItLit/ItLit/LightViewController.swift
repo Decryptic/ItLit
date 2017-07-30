@@ -25,9 +25,12 @@ class LightViewController: UIViewController, CLLocationManagerDelegate {
         initFriends()
         
         //init selfie
+        let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as String
+        let url = NSURL(fileURLWithPath: path)
+        let filePath = url.appendingPathComponent("selfie.png")?.path
         let fileMan = FileManager.default
-        if fileMan.fileExists(atPath: Const.selfieDir()) {
-            Const.faces[Const.uname] = UIImage(contentsOfFile: Const.selfieDir())
+        if fileMan.fileExists(atPath: filePath!) {
+            Const.faces[Const.uname] = UIImage(contentsOfFile: filePath!)
         }
         else {
             Const.faces[Const.uname] = UIImage(named: "nullpicbig")
@@ -170,7 +173,7 @@ class LightViewController: UIViewController, CLLocationManagerDelegate {
         let task = URLSession.shared.dataTask(with: request) { data, resp, error in
             guard let data = data, error == nil else {
                 DispatchQueue.main.async {
-                    let err = error?.localizedDescription ?? "Please try again later"
+                    let err = error?.localizedDescription ?? Const.ptal
                     self.view.makeToast(err, duration: Const.tt(), position: .top)
                 }
                 return
@@ -203,8 +206,8 @@ class LightViewController: UIViewController, CLLocationManagerDelegate {
                                     alertController.addAction(cancelAction)
                                     
                                     let openAction = UIAlertAction(title: "Open Settings", style: .default) { action in
-                                        if let url = NSURL(string: UIApplicationOpenSettingsURLString) {
-                                            UIApplication.shared.open(url, options: nil, completionHandler: nil)
+                                        if let url = URL(string: UIApplicationOpenSettingsURLString) {
+                                            UIApplication.shared.open(url, options: [:], completionHandler: nil)
                                         }
                                     }
                                     alertController.addAction(openAction)
@@ -237,9 +240,9 @@ class LightViewController: UIViewController, CLLocationManagerDelegate {
                     }
                 }
             } else {
-                print("Light: response was not json")
+                print("error lightSwitch(): response was not json")
                 DispatchQueue.main.async {
-                    self.view.makeToast("Please try again later", duration: Const.tt(), position: .top)
+                    self.view.makeToast(Const.ptal, duration: Const.tt(), position: .top)
                 }
             }
         }
@@ -279,7 +282,7 @@ class LightViewController: UIViewController, CLLocationManagerDelegate {
                         // moved
                     }
                 } else {
-                    print("Move: response was not json")
+                    print("error locationManager(): Light response was not json")
                 }
             }
             task.resume()
@@ -326,7 +329,7 @@ class LightViewController: UIViewController, CLLocationManagerDelegate {
                     // status changed
                 }
             } else {
-                print("StatusChange: response was not json")
+                print("error statusChange(): response was not json")
             }
         }
         task.resume()
@@ -350,7 +353,7 @@ class LightViewController: UIViewController, CLLocationManagerDelegate {
         let task = URLSession.shared.dataTask(with: request) { data, resp, error in
             guard let data = data, error == nil else {
                 DispatchQueue.main.async {
-                    let err = error?.localizedDescription ?? "Please try again later"
+                    let err = error?.localizedDescription ?? Const.ptal
                     self.view.makeToast(err, duration: Const.tt(), position: .top)
                 }
                 return
@@ -366,7 +369,7 @@ class LightViewController: UIViewController, CLLocationManagerDelegate {
                     // logged out
                 }
             } else {
-                print("Logout: response was not json")
+                print("error logOut(): response was not json")
             }
         }
         task.resume()

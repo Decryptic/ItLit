@@ -33,13 +33,13 @@
     {
       "size" : "60x60",
       "idiom" : "iphone",
-      "filename" : "ilitticon2x-2.png",
+      "filename" : "iphoneicon2x.png",
       "scale" : "2x"
     },
     {
       "size" : "60x60",
       "idiom" : "iphone",
-      "filename" : "ilitticon3x-2.png",
+      "filename" : "iphoneicon3x.png",
       "scale" : "3x"
     },
     {
@@ -80,13 +80,13 @@
     {
       "size" : "76x76",
       "idiom" : "ipad",
-      "filename" : "ipadicon2-2.png",
+      "filename" : "ipadicon2.png",
       "scale" : "2x"
     },
     {
       "size" : "83.5x83.5",
       "idiom" : "ipad",
-      "filename" : "ipadicon3-2.png",
+      "filename" : "ipadicon3.png",
       "scale" : "2x"
     }
   ],

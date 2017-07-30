@@ -70,7 +70,7 @@ class FriendsViewController: UIViewController, UITableViewDataSource, UITableVie
                 let task = URLSession.shared.dataTask(with: request) { data, resp, error in
                     guard let data = data, error == nil else {
                         DispatchQueue.main.async {
-                            let err = error?.localizedDescription ?? "Please try again later"
+                            let err = error?.localizedDescription ?? Const.ptal
                             self.view.makeToast(err, duration: Const.tt(), position: .top)
                         }
                         return
@@ -95,7 +95,7 @@ class FriendsViewController: UIViewController, UITableViewDataSource, UITableVie
                             }
                         }
                     } else {
-                        print("SetFriend: response was not json")
+                        print("error shortPress(): Friends response was not json")
                     }
                 }
                 task.resume()
@@ -126,7 +126,7 @@ class FriendsViewController: UIViewController, UITableViewDataSource, UITableVie
                     let task = URLSession.shared.dataTask(with: request) { data, resp, error in
                         guard let data = data, error == nil else {
                             DispatchQueue.main.async {
-                                let err = error?.localizedDescription ?? "Please try again later"
+                                let err = error?.localizedDescription ?? Const.ptal
                                 self.view.makeToast(err, duration: Const.tt(), position: .top)
                             }
                             return
@@ -146,9 +146,9 @@ class FriendsViewController: UIViewController, UITableViewDataSource, UITableVie
                             }
                         } else {
                             DispatchQueue.main.async {
-                                self.view.makeToast("Please try again later", duration: 2.0, position: .top)
+                                self.view.makeToast(Const.ptal, duration: 2.0, position: .top)
                             }
-                            print("DelFriend: response was not json")
+                            print("error longpress(): Friends response was not json")
                         }
                     }
                     task.resume()
@@ -174,9 +174,10 @@ class FriendsViewController: UIViewController, UITableViewDataSource, UITableVie
         if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
             btnSelfie?.setImage(image, for: .normal)
             Const.faces[Const.uname] = image
-            let pngImage = UIImagePNGRepresentation(image)
+            var pngImage = UIImagePNGRepresentation(image)
             do {
                 try pngImage!.write(to: URL(string: Const.selfieDir())!)
+                pngImage = UIImagePNGRepresentation(image.resized(toWidth: 100.0)!)
                 
                 let border = "--- BUILD A WALL ---"
                 let url = URL(string: Const.server("setpic"))
@@ -203,7 +204,7 @@ class FriendsViewController: UIViewController, UITableViewDataSource, UITableVie
                 let task = URLSession.shared.dataTask(with: request) { data, resp, error in
                     guard let data = data, error == nil else {
                         DispatchQueue.main.async {
-                            let err = error?.localizedDescription ?? "Please try again later"
+                            let err = error?.localizedDescription ?? Const.ptal
                             self.view.makeToast(err, duration: Const.tt(), position: .top)
                         }
                         return
@@ -211,21 +212,21 @@ class FriendsViewController: UIViewController, UITableViewDataSource, UITableVie
                     let response = try? JSONSerialization.jsonObject(with: data)
                     if let response = response as? [String: Any] {
                         if let err = response["error"] as? String {
-                            print("location update error: " + err)
+                            print("setpic error: " + err)
                         }
                         else {
                             // pic set
                         }
                     } else {
-                        print("SetPic: something went wrong")
+                        print("error imagePickerController(): Friends something went wrong")
                         DispatchQueue.main.async {
-                            self.view.makeToast("Please try again later", duration: 2.0, position: .top)
+                            self.view.makeToast(Const.ptal, duration: Const.tt(), position: .top)
                         }
                     }
                 }
                 task.resume()
             } catch {
-                self.view.makeToast("Failed to save image", duration: 2.0, position: .top)
+                self.view.makeToast("Failed to save image", duration: Const.tt(), position: .top)
             }
         }
         picker.dismiss(animated: true, completion: nil)

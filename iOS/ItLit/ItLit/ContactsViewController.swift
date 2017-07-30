@@ -56,7 +56,7 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
             let task = URLSession.shared.dataTask(with: request) { data, resp, error in
                 guard let data = data, error == nil else {
                     DispatchQueue.main.async {
-                        let err = error?.localizedDescription ?? "Please try again later"
+                        let err = error?.localizedDescription ?? Const.ptal
                         self.view.makeToast(err, duration: Const.tt(), position: .top)
                     }
                     return
@@ -96,9 +96,9 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
                         }
                     }
                 } else {
-                    print("ContactFriend: response was not json")
+                    print("error shortPress(): Contacts response was not json")
                     DispatchQueue.main.async {
-                        self.view.makeToast("Please try again later", duration: Const.tt(), position: .top)
+                        self.view.makeToast(Const.ptal, duration: Const.tt(), position: .top)
                     }
                 }
             }
@@ -199,7 +199,7 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
         let task = URLSession.shared.dataTask(with: request) { data, resp, error in
             guard let data = data, error == nil else {
                 DispatchQueue.main.async {
-                    let err = error?.localizedDescription ?? "Please try again later"
+                    let err = error?.localizedDescription ?? Const.ptal
                     self.view.makeToast(err, duration: Const.tt(), position: .top)
                 }
                 return
@@ -212,9 +212,9 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
                     }
                 }
             } else {
-                print("InitStatus: response was not json")
+                print("error done(): response was not json")
                 DispatchQueue.main.async {
-                    self.view.makeToast("Please try again later", duration: Const.tt(), position: .top)
+                    self.view.makeToast(Const.ptal, duration: Const.tt(), position: .top)
                 }
             }
         }

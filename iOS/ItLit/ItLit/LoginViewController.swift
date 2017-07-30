@@ -33,16 +33,6 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var etPhone: UITextField!
     @IBOutlet weak var etPasswd: UITextField!
     
-    func sha256(input: String) -> String {
-        let data = input.data(using: String.Encoding.utf8)
-        let res = NSMutableData(length: Int(CC_SHA256_DIGEST_LENGTH))
-        CC_SHA256(((data! as NSData)).bytes, CC_LONG(data!.count), res?.mutableBytes.assumingMemoryBound(to: UInt8.self))
-        let hashedString = "\(res!)".replacingOccurrences(of: "", with: "").replacingOccurrences(of: " ", with: "")
-        let badchar: CharacterSet = CharacterSet(charactersIn: "\"<\",\">\"")
-        let cleanedstring: String = (hashedString.components(separatedBy: badchar) as NSArray).componentsJoined(by: "")
-        return cleanedstring
-    }
-    
     func errorless(username: String, password: String) -> String? {
         if username == "" {
             return "Please try a phone number"
@@ -59,7 +49,7 @@ class LoginViewController: UIViewController {
     @IBAction func register(sender: UIButton) {
         let uname = Const.phonify(number: etPhone.text ?? "")
         let passwd = etPasswd.text ?? ""
-        let passHash: String = sha256(input: passwd)
+        let passHash: String = Const.sha256(input: passwd)
         Const.uname = uname
         Const.passwd = passHash
         let json = ["uname": uname, "passwd": passHash]
@@ -80,7 +70,7 @@ class LoginViewController: UIViewController {
         let task = URLSession.shared.dataTask(with: request) { data, resp, error in
             guard let data = data, error == nil else {
                 DispatchQueue.main.async {
-                    let err = error?.localizedDescription ?? "Please try again later"
+                    let err = error?.localizedDescription ?? Const.ptal
                     self.view.makeToast(err, duration: Const.tt(), position: .top)
                 }
                 return
@@ -104,9 +94,9 @@ class LoginViewController: UIViewController {
                     }
                 }
             } else {
-                print("Register: response was not json")
+                print("error register(): response was not json")
                 DispatchQueue.main.async {
-                    self.view.makeToast("Please try again later", duration: Const.tt(), position: .top)
+                    self.view.makeToast(Const.ptal, duration: Const.tt(), position: .top)
                 }
             }
         }
@@ -122,7 +112,7 @@ class LoginViewController: UIViewController {
             return
         }
         
-        loginAux(uname: uname, passHash: sha256(input: passwd))
+        loginAux(uname: uname, passHash: Const.sha256(input: passwd))
     }
     
     func loginAux(uname: String, passHash: String) {
@@ -139,7 +129,7 @@ class LoginViewController: UIViewController {
         let task = URLSession.shared.dataTask(with: request) { data, resp, error in
             guard let data = data, error == nil else {
                 DispatchQueue.main.async {
-                    let err = error?.localizedDescription ?? "Please try again later"
+                    let err = error?.localizedDescription ?? Const.ptal
                     self.view.makeToast(err, duration: Const.tt(), position: .top)
                 }
                 return
@@ -165,9 +155,9 @@ class LoginViewController: UIViewController {
                     }
                 }
             } else {
-                print("Login: response was not json")
+                print("error loginAux(): response was not json")
                 DispatchQueue.main.async {
-                    self.view.makeToast("Please try again later", duration: Const.tt(), position: .top)
+                    self.view.makeToast(Const.ptal, duration: Const.tt(), position: .top)
                 }
             }
         }
