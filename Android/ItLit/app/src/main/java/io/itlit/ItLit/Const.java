@@ -24,6 +24,8 @@ public class Const {
     public static RoundedImageView rivSelfie;
     public static GoogleMap googleMap;
 
+    public static int activateAttempts = 0;
+
     public static Location lastKnown; // The last known location of the user
     private static String nullHash = "0000000000000000000000000000000000000000000000000000000000000000";
     public static String uname = "0000000000";

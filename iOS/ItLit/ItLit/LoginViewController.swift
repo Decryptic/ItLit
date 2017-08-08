@@ -62,7 +62,6 @@ class LoginViewController: UIViewController {
         
         var registrationAttempts = UserDefaults.standard.integer(forKey: "registrationAttempts")
         let registrationTime = UserDefaults.standard.double(forKey: "lastRegistrationAttempt")
-        print("attempts: " + String(registrationAttempts) + " time: " + String(registrationTime))
         if registrationAttempts >= 3 {
             if Date().timeIntervalSince1970 - registrationTime > 24 * 60 * 60 {
                 UserDefaults.standard.set(0, forKey: "registrationAttempts")

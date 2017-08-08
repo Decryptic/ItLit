@@ -37,6 +37,12 @@ public class ActivateActivity extends AppCompatActivity {
                     return;
                 }
 
+                if (Const.activateAttempts >= 3) {
+                    Toast.makeText(getApplicationContext(), Const.ptal, Toast.LENGTH_SHORT).show();
+                    ActivateActivity.this.finish();
+                    return;
+                }
+
                 final int code = Integer.parseInt(scode);
                 Thread t = new Thread(new Runnable() {
                     @Override
@@ -51,20 +57,20 @@ public class ActivateActivity extends AppCompatActivity {
                                 @Override
                                 public void run() {
                                     String sresp = "Welcome, please log in";
+                                    boolean active = true;
                                     try {
-                                        if (resp.has("error"))
+                                        if (resp.has("error")) {
                                             sresp = resp.getString("error");
-                                    } catch (Exception e) { }
-                                    final String fs = sresp;
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Toast.makeText(getApplicationContext(), fs, Toast.LENGTH_SHORT).show();
+                                            Const.activateAttempts++;
+                                            active = false;
                                         }
-                                    });
+                                    } catch (Exception e) { active = false; }
+                                    Toast.makeText(getApplicationContext(), sresp, Toast.LENGTH_SHORT).show();
+                                    if (active) {
+                                        ActivateActivity.this.finish();
+                                    }
                                 }
                             });
-                            ActivateActivity.this.finish();
                         }
                         catch (Exception e) {
                             runOnUiThread(new Runnable() {

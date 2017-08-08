@@ -78,9 +78,10 @@ public class LoginActivity extends AppCompatActivity {
                                 Const.lit = false;
 
                                 SharedPreferences settings = getApplicationContext().getSharedPreferences(Const.userprefs, Context.MODE_PRIVATE);
-                                settings.edit().putString("uname", uname);
-                                settings.edit().putString("passwd", passwd);
-                                settings.edit().commit();
+                                SharedPreferences.Editor editor = settings.edit();
+                                editor.putString("uname", uname);
+                                editor.putString("passwd", passwd);
+                                editor.commit();
 
                                 Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
                                 LoginActivity.this.startActivity(mainIntent);
@@ -111,6 +112,28 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), err, Toast.LENGTH_SHORT).show();
                     return;
                 }
+
+                Const.activateAttempts = 0;
+
+                SharedPreferences settings = getApplicationContext().getSharedPreferences(Const.userprefs, Context.MODE_PRIVATE);
+                int registrationAttempts = settings.getInt("registrationAttempts", 0);
+                double registrationTime = (double)settings.getFloat("registrationTime", 0);
+                System.out.println("attempts: " + registrationAttempts + " time: " + registrationTime);
+                double time = System.currentTimeMillis() / 1000.0;
+                if (registrationAttempts >= 3) {
+                    if (time - registrationTime > 24 * 60 * 60) {
+                        settings.edit().putInt("registrationAttempts", 0);
+                        registrationAttempts = 0;
+                    }
+                    else {
+                        Toast.makeText(getApplicationContext(), "Only 3 registrations per day", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putInt("registrationAttempts", registrationAttempts + 1);
+                editor.putFloat("registrationTime", (float)time);
+                editor.commit();
 
                 new Thread(new Runnable() {
                     @Override
