@@ -18,6 +18,7 @@ class LoginViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
         
         if  let uname  = UserDefaults.standard.string(forKey: "uname"),
             let passwd = UserDefaults.standard.string(forKey: "passwd") {
@@ -50,14 +51,30 @@ class LoginViewController: UIViewController {
         let uname = Const.phonify(number: etPhone.text ?? "")
         let passwd = etPasswd.text ?? ""
         let passHash: String = Const.sha256(input: passwd)
-        Const.uname = uname
-        Const.passwd = passHash
         let json = ["uname": uname, "passwd": passHash]
         
         if let err = errorless(username: uname, password: passwd) {
             self.view.makeToast(err, duration: Const.tt(), position: .top)
             return
         }
+        
+        Const.activateAttempts = 0
+        
+        var registrationAttempts = UserDefaults.standard.integer(forKey: "registrationAttempts")
+        let registrationTime = UserDefaults.standard.double(forKey: "lastRegistrationAttempt")
+        print("attempts: " + String(registrationAttempts) + " time: " + String(registrationTime))
+        if registrationAttempts >= 3 {
+            if Date().timeIntervalSince1970 - registrationTime > 24 * 60 * 60 {
+                UserDefaults.standard.set(0, forKey: "registrationAttempts")
+                registrationAttempts = 0
+            }
+            else {
+                self.view.makeToast("Only 3 registrations per day", duration: Const.tt(), position: .top)
+                return
+            }
+        }
+        UserDefaults.standard.set(registrationAttempts+1, forKey: "registrationAttempts")
+        UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: "lastRegistrationAttempt")
         
         let auth = try? JSONSerialization.data(withJSONObject: json)
         let url = URL(string: Const.server("register"))
@@ -85,7 +102,7 @@ class LoginViewController: UIViewController {
                 }
                 else {
                     Const.uname = uname
-                    Const.passwd = passwd
+                    Const.passwd = passHash
                     
                     DispatchQueue.main.async {
                         let viewController = self.storyboard?.instantiateViewController(

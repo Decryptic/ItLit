@@ -32,7 +32,7 @@ class ActivateViewController : UIViewController {
             return
         }
         
-        let json = ["uname": Const.uname, "passwd": Const.passwd, code: code]
+        let json: [String: Any] = ["uname": Const.uname, "passwd": Const.passwd, "code": Int(code)!]
         
         let auth = try? JSONSerialization.data(withJSONObject: json)
         let url = URL(string: Const.server("activate"))
@@ -53,15 +53,30 @@ class ActivateViewController : UIViewController {
             let response = try? JSONSerialization.jsonObject(with: data)
             if let response = response as? [String: Any] {
                 if let err = response["error"] {
-                    DispatchQueue.main.async {
-                        self.view.makeToast(err as! String, duration: Const.tt(), position: .top)
+                    Const.activateAttempts += 1
+                    if Const.activateAttempts >= 3 {
+                        DispatchQueue.main.async {
+                            self.view.makeToast(Const.ptal, duration: Const.tt(), position: .top)
+                        }
+                        sleep(2)
+                        DispatchQueue.main.async {
+                            self.dismiss(animated: true, completion: nil)
+                        }
+                    }
+                    else {
+                        DispatchQueue.main.async {
+                            self.view.makeToast(err as! String, duration: Const.tt(), position: .top)
+                        }
                     }
                 }
                 else {
                     DispatchQueue.main.async {
                         self.view.makeToast("Welcome, please log in", duration: Const.tt(), position: .top)
                     }
-                    self.dismiss(animated: true, completion: nil)
+                    sleep(2)
+                    DispatchQueue.main.async {
+                        self.dismiss(animated: true, completion: nil)
+                    }
                 }
             } else {
                 print("error activate(): response was not json")

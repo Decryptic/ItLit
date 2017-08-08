@@ -22,6 +22,8 @@ class Const {
         return 2.0
     }
     
+    public static var activateAttempts = 0
+    
     public static var uname: String = "0000000000"
     public static var passwd: String = "0000000000000000000000000000000000000000000000000000000000000000"
     public static var lit: Bool = false
