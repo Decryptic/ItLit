@@ -402,8 +402,7 @@
                                         <textInputTraits key="textInputTraits"/>
                                         <connections>
                                             <action selector="resignKeyboardWithSender:" destination="8rJ-Kc-sve" eventType="editingDidEndOnExit" id="Ks4-JN-WRy"/>
-                                            <action selector="statusChangeCharWithSender:" destination="8rJ-Kc-sve" eventType="editingChanged" id="IFy-hZ-Mb7"/>
-                                            <action selector="statusChangeWithSender:" destination="8rJ-Kc-sve" eventType="editingDidEnd" id="Wpg-Wv-5k6"/>
+                                            <action selector="statusChangeWithSender:" destination="8rJ-Kc-sve" eventType="editingChanged" id="vtv-ai-WYH"/>
                                         </connections>
                                     </textField>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="0 characters" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bVm-eh-4Pm">

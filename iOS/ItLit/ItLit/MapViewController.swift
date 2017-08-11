@@ -146,11 +146,14 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
                                 if let oldLit = self.oldMarkers {
                                     for fren in oldLit {
                                         if fren.key == phone {
+                                            let oldStatus = fren.value.snippet
+                                            let newStatus = friend["status"] as! String
+                                            
                                             let oldLat = fren.value.position.latitude
                                             let oldLon = fren.value.position.longitude
                                             let newLat = friend["lat"] as! Double
                                             let newLon = friend["lon"] as! Double
-                                            if oldLat == newLat && oldLon == newLon {
+                                            if oldLat == newLat && oldLon == newLon && oldStatus == newStatus {
                                                 var iconAfterZoom: UIImage!
                                                 if let img = Const.faces[phone] {
                                                     iconAfterZoom = img

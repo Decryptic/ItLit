@@ -293,15 +293,18 @@ class LightViewController: UIViewController, CLLocationManagerDelegate {
         print(error)
     }
     
-    @IBAction func statusChangeChar(sender: UITextField) {
+    @IBAction func statusChange(sender: UITextField) {
         var num: String = "0"
         if let txt = etStatus.text {
-            num = String(txt.characters.count)
+            let leng = txt.characters.count
+            if leng > 50 {
+                etStatus.text = txt.substring(to: txt.index(before: txt.endIndex))
+                return
+            }
+            num = String(leng)
         }
         tvChars.text = num + " characters"
-    }
-    
-    @IBAction func statusChange(sender: UITextField) {
+        
         let status: String = etStatus.text ?? ""
         let json: [String: Any] = ["uname": Const.uname, "passwd": Const.passwd, "status": status]
         
