@@ -80,7 +80,7 @@ public class LoginActivity extends AppCompatActivity {
                                 SharedPreferences settings = getApplicationContext().getSharedPreferences(Const.userprefs, Context.MODE_PRIVATE);
                                 SharedPreferences.Editor editor = settings.edit();
                                 editor.putString("uname", uname);
-                                editor.putString("passwd", passwd);
+                                editor.putString("passwd", shapasswd);
                                 editor.commit();
 
                                 Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);

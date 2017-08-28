@@ -373,6 +373,15 @@ public class TabFragment extends Fragment {
                 }
             });
 
+            final TextView tvLitcoin = (TextView) rootView.findViewById(R.id.tvLitcoin);
+            tvLitcoin.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent mainIntent = new Intent(getActivity(), LitcoinActivity.class);
+                    getActivity().startActivity(mainIntent);
+                }
+            });
+
             final TextView tvChars = (TextView) rootView.findViewById(R.id.tvChars);
             final EditText etStatus = (EditText) rootView.findViewById(R.id.etStatus);
 
