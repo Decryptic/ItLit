@@ -6,8 +6,8 @@
 //  Copyright © 2017 juicyasf. All rights reserved.
 //
 
-import UIKit
 import Foundation
+import UIKit
 import CoreLocation
 
 class LightViewController: UIViewController, CLLocationManagerDelegate {
@@ -336,6 +336,11 @@ class LightViewController: UIViewController, CLLocationManagerDelegate {
             }
         }
         task.resume()
+    }
+    
+    @IBAction func litcoin(sender: UIButton) {
+        let viewController = self.storyboard?.instantiateViewController(withIdentifier: "LitcoinViewController")
+        self.present(viewController!, animated: true, completion: nil)
     }
 
     @IBAction func logOut(sender: UIButton) {
