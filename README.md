@@ -1,5 +1,6 @@
 # ItLit
 find parties and friends
+https://www.itlit.io
 
 ItLit is your app for finding parties, making acquaintances while you're out on the town, music festivals, field trips, etc.
 
