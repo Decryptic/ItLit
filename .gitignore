@@ -2,6 +2,7 @@ Keys.swift
 server/
 keys.xml
 gradle.properties
+*.jks
 
 ## Android stuff
 #built application files
