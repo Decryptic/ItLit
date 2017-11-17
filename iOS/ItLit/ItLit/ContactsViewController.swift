@@ -177,7 +177,7 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
     
     func allDigits(_ num: String) -> String {
         var res = ""
-        for ch in num.characters {
+        for ch in num {
             if ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].contains(ch) {
                 res.append(ch)
             }
