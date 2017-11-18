@@ -2,6 +2,8 @@ package io.itlit.ItLit;
 
 import android.*;
 import android.app.Service;
+import android.app.PendingIntent;
+import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -11,8 +13,8 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
 import org.json.JSONObject;
-import android.content.SharedPreferences;
 
 public class GPSService extends Service {
     public GPSService() {
@@ -38,6 +40,7 @@ public class GPSService extends Service {
             }
         }
         Const.lastKnown = null;
+        stopForeground(true);
     }
 
     @Override
@@ -45,6 +48,18 @@ public class GPSService extends Service {
         super.onCreate();
         int permission = ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION);
         if (permission == PackageManager.PERMISSION_GRANTED) {
+
+            Intent notificationIntent = new Intent(this, MainActivity.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
+            Notification notification = new NotificationCompat.Builder(this)
+                    .setSmallIcon(R.drawable.candlenotif)
+                    .setContentTitle("Light On")
+                    .setContentText("Location broadcasting.")
+                    .setContentIntent(pendingIntent).build();
+
+            startForeground(1337, notification);
+
             locationListener = new LocationListener() {
                 @Override
                 public void onLocationChanged(final Location location) {
