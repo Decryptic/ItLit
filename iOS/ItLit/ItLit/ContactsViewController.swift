@@ -127,7 +127,7 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
             var predicate: NSPredicate!
             if search != "" {
                 predicate = CNContact.predicateForContacts(matchingName: search)
-                let contacts = try store.unifiedContacts(matching: predicate, keysToFetch: keysToFetch)
+                let contacts = try store.unifiedContacts(matching: predicate, keysToFetch: keysToFetch) //
                 for contact in contacts {
                     var friend: [String: Any] = [:]
                     friend["name"] = contact.givenName + " " + contact.familyName
@@ -152,17 +152,20 @@ class ContactsViewController: UIViewController, UITableViewDataSource, UITableVi
                     results.append(contentsOf: cResults)
                 }
                 for fren in results {
-                    var friend: [String: Any] = [:]
-                    friend["name"] = fren.givenName + " " + fren.familyName
-                    friend["fname"] = allDigits(fren.phoneNumbers[0].value.stringValue)
-                    var lit = false
-                    for fren in Const.friends {
-                        if fren["fname"] as! String == friend["fname"] as! String {
-                            lit = true
+                    if (fren.phoneNumbers.count > 0) {
+                        var friend: [String: Any] = [:]
+                        
+                        friend["name"] = fren.givenName + " " + fren.familyName
+                        friend["fname"] = allDigits(fren.phoneNumbers[0].value.stringValue)
+                        var lit = false
+                        for fren in Const.friends {
+                            if fren["fname"] as! String == friend["fname"] as! String {
+                                lit = true
+                            }
                         }
+                        friend["lit"] = lit
+                        Const.contacts.append(friend)
                     }
-                    friend["lit"] = lit
-                    Const.contacts.append(friend)
                 }
             }
             self.lvContacts.reloadData()
