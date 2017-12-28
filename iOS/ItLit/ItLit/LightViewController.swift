@@ -70,7 +70,9 @@ class LightViewController: UIViewController, CLLocationManagerDelegate {
                     else {
                         imgName = "lightoff"
                     }
-                    self.btnLight.setImage(UIImage(named:imgName), for: .normal)
+                    DispatchQueue.main.async {
+                        self.btnLight.setImage(UIImage(named:imgName), for: .normal)
+                    }
                 }
                 else {
                     print("error /light must not be working right")
@@ -105,8 +107,10 @@ class LightViewController: UIViewController, CLLocationManagerDelegate {
                     print("error in initStatus: " + (err as! String))
                 }
                 else if let status = response["status"] {
-                    self.etStatus.text = status as? String ?? ""
-                    self.tvChars.text = String((status as! String).characters.count) + " characters"
+                    DispatchQueue.main.async {
+                        self.etStatus.text = status as? String ?? ""
+                        self.tvChars.text = String((status as! String).characters.count) + " characters"
+                    }
                 }
                 else {
                     print("What happened here")

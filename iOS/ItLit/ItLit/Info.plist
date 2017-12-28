@@ -17,19 +17,19 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.4</string>
+	<string>1.6</string>
 	<key>CFBundleVersion</key>
-	<string>5</string>
+	<string>7</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>may ${PRODUCT_NAME} use your phone's camera to take profile pictures?</string>
 	<key>NSContactsUsageDescription</key>
 	<string>may ${PRODUCT_NAME} view your phone's contacts to add friends?</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>chack out our privacy policy at https://itlit.io/privacy/. only friends accompanied by a lit candle can see your location.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>check out our privacy policy at https://itlit.io/privacy/. only friends accompanied by a lit candle can see your location.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>chack out our privacy policy at https://itlit.io/privacy/. only friends accompanied by a lit candle can see your location.</string>
+	<string>check out our privacy policy at https://itlit.io/privacy/. only friends accompanied by a lit candle can see your location.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>may ${PRODUCT_NAME} access photo library to select selfies?</string>
 	<key>UIBackgroundModes</key>

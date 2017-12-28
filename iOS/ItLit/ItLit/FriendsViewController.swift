@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import MobileCoreServices
+import Contacts
 
 class FriendsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
@@ -34,9 +35,32 @@ class FriendsViewController: UIViewController, UITableViewDataSource, UITableVie
         self.present(viewController!, animated: true, completion: nil)
     }
     
-    func importContacts() {
+    func showContactsView() {
         let viewController = self.storyboard?.instantiateViewController(withIdentifier: "ContactsViewController")
         self.present(viewController!, animated: true, completion: nil)
+    }
+    
+    func importContacts() {
+        switch CNContactStore.authorizationStatus(for: .contacts) {
+        case .authorized:
+            showContactsView()
+        case .denied:
+            let alert = UIAlertController(title: nil, message: "Would you like to open settings and grant ItLit permission to view your contacts?", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Open Settings", style: .default) { action in
+                UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!)
+            })
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel) { action in
+            })
+            present(alert, animated: true)
+        case .restricted, .notDetermined:
+            CNContactStore().requestAccess(for: .contacts) { granted, error in
+                if granted {
+                    DispatchQueue.main.async {
+                        self.showContactsView()
+                    }
+                } else { }
+            }
+        }
     }
     
     func pictureTime() {

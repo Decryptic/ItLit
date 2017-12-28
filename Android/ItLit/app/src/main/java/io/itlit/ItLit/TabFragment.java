@@ -97,7 +97,7 @@ public class TabFragment extends Fragment {
                                 JSONObject fren = new JSONObject();
                                 fren.put("fname", (String)f.get("fname"));
                                 fren.put("name", (String)f.get("name"));
-                                fren.put("lit", (boolean)f.get("lit"));
+                                fren.put("lit", !((boolean)f.get("lit")));
                                 auth.put("friend", fren);
                                 JSONObject resp = new JSONObject(Network.setfriend(auth.toString()));
 
@@ -110,7 +110,7 @@ public class TabFragment extends Fragment {
                                         }
                                     });
                                 } else { // If the server switched the candle, switch it
-                                    f.put("lit", !(boolean)f.get("lit"));
+                                    f.put("lit", !((boolean)f.get("lit")));
                                     getActivity().runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
