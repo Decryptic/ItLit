@@ -30,12 +30,12 @@
             android:layout_height="181dp"
             app:srcCompat="@drawable/lightoff"
             android:id="@+id/ivLight"
-            android:layout_weight="0.46" />
+            android:layout_weight="0.66" />
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="75dp"
-            android:layout_weight="0.41">
+            android:layout_weight="0.33">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -59,8 +59,7 @@
                 android:id="@+id/etStatus"
                 android:textColor="@color/colorText"
                 android:textColorHint="@color/colorText"
-                android:hint="what's hapenen?"
-                android:layout_weight="0.14"
+                android:hint="@string/status_hint"
                 android:singleLine="false"
                 android:layout_alignParentTop="true"
                 android:layout_marginTop="38dp"

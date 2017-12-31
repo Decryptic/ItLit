@@ -1,9 +1,11 @@
 package io.itlit.ItLit;
 
 import android.*;
-import android.app.Service;
-import android.app.PendingIntent;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.Notification;
+import android.app.Service;
+import android.graphics.Color;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -13,7 +15,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NotificationCompat;
 import org.json.JSONObject;
 
 public class GPSService extends Service {
@@ -43,22 +44,35 @@ public class GPSService extends Service {
         stopForeground(true);
     }
 
+    private void notificationify() {
+        String channelId = NotificationChannel.DEFAULT_CHANNEL_ID;
+        CharSequence channelName = "Miscellaneous";
+        int importance = NotificationManager.IMPORTANCE_LOW;
+        NotificationChannel notificationChannel = new NotificationChannel(channelId, channelName, importance);
+        notificationChannel.enableLights(true);
+        notificationChannel.setLightColor(Color.YELLOW);
+        notificationChannel.enableVibration(false);
+
+        NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.createNotificationChannel(notificationChannel);
+
+        Notification notification = new Notification.Builder(this)
+                .setSmallIcon(R.drawable.candlenotif)
+                .setContentTitle("Light On")
+                .setContentText("Location broadcasting.")
+                .setChannelId(channelId)
+                .build();
+
+        notificationManager.notify(1, notification);
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
         int permission = ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION);
         if (permission == PackageManager.PERMISSION_GRANTED) {
 
-            Intent notificationIntent = new Intent(this, MainActivity.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-
-            Notification notification = new NotificationCompat.Builder(this)
-                    .setSmallIcon(R.drawable.candlenotif)
-                    .setContentTitle("Light On")
-                    .setContentText("Location broadcasting.")
-                    .setContentIntent(pendingIntent).build();
-
-            startForeground(1337, notification);
+            notificationify();
 
             locationListener = new LocationListener() {
                 @Override

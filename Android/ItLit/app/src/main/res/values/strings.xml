@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ItLit</string>
+    <string name="status_hint">what's happenen</string>
 </resources>
