@@ -41,30 +41,20 @@ public class GPSService extends Service {
             }
         }
         Const.lastKnown = null;
-        stopForeground(true);
+        //stopForeground(true);
     }
 
-    private void notificationify() {
-        String channelId = NotificationChannel.DEFAULT_CHANNEL_ID;
-        CharSequence channelName = "Miscellaneous";
-        int importance = NotificationManager.IMPORTANCE_LOW;
-        NotificationChannel notificationChannel = new NotificationChannel(channelId, channelName, importance);
-        notificationChannel.enableLights(true);
-        notificationChannel.setLightColor(Color.YELLOW);
-        notificationChannel.enableVibration(false);
-
-        NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.createNotificationChannel(notificationChannel);
-
-        Notification notification = new Notification.Builder(this)
+    /**private void notificationify() {
+        String CHANNEL_ID = NotificationChannel.DEFAULT_CHANNEL_ID;// The id of the channel.
+        CharSequence name = getString(R.string.channel_name);// The user-visible name of the channel.
+        int importance = NotificationManager.IMPORTANCE_HIGH;
+        NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
+        Notification notification = new Notification.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.candlenotif)
                 .setContentTitle("Light On")
                 .setContentText("Location broadcasting.")
-                .setChannelId(channelId)
                 .build();
-
-        notificationManager.notify(1, notification);
-    }
+    }*/
 
     @Override
     public void onCreate() {
@@ -72,7 +62,7 @@ public class GPSService extends Service {
         int permission = ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION);
         if (permission == PackageManager.PERMISSION_GRANTED) {
 
-            notificationify();
+            // a notification here would be cool
 
             locationListener = new LocationListener() {
                 @Override
