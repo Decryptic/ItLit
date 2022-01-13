@@ -1,6 +1,7 @@
 # ItLit
 find parties and friends
-extinct api: #https://www.itlit.io 
+
+extinct api: www.itlit.io 
 
 ItLit is your app for finding parties, making acquaintances while you're out on the town, music festivals, field trips, etc.
 
