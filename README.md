@@ -3,6 +3,8 @@ find parties and friends
 
 extinct api: www.itlit.io 
 
+This app was too fringe to keep running, neverless feel free to check out the code I wrote in 2017. In this repository, you will find two native repositories: one Android (Java) and the other iOS (Swift). Also, you will find the redacted API written in Python using the Flask web server.
+
 ItLit is your app for finding parties, making acquaintances while you're out on the town, music festivals, field trips, etc.
 
 On the right, you have a map where you can see all of your friends who are online.
